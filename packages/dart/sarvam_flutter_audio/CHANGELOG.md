@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0](https://github.com/ibhanu/sarvam-mobile/compare/dart-audio-v0.1.0...dart-audio-v0.2.0) (2026-10-16)
+
+
+### Features
+
+* initial commit of Sarvam Mobile SDKs monorepo ([8114f80](https://github.com/ibhanu/sarvam-mobile/commit/8114f80d555332f8fca3f3c84cd720543b42746c))
+* **release:** configure multi-registry publishing, licenses, and GitHub Actions release pipeline ([3ab9d6b](https://github.com/ibhanu/sarvam-mobile/commit/3ab9d6bf3e1bcc39ce127d8c2a47298744adae7e))
+
+
+### Bug Fixes
+
+* update CI Flutter action, upgrade Gradle wrapper, and resolve mic streamer concurrency race ([c23af7d](https://github.com/ibhanu/sarvam-mobile/commit/c23af7d3c1138dbbc93f6462bf3584d2844eb0cb))
+
 ## [0.1.0] - 2026-10-16
 
 ### Added

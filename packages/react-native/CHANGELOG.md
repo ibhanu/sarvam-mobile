@@ -5,6 +5,19 @@ All notable changes to `@sarvam/react-native` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0](https://github.com/ibhanu/sarvam-mobile/compare/react-native-v0.1.0...react-native-v0.2.0) (2026-10-16)
+
+
+### Features
+
+* initial commit of Sarvam Mobile SDKs monorepo ([8114f80](https://github.com/ibhanu/sarvam-mobile/commit/8114f80d555332f8fca3f3c84cd720543b42746c))
+* **release:** configure multi-registry publishing, licenses, and GitHub Actions release pipeline ([3ab9d6b](https://github.com/ibhanu/sarvam-mobile/commit/3ab9d6bf3e1bcc39ce127d8c2a47298744adae7e))
+
+
+### Bug Fixes
+
+* **ci:** build conformance mock server, select Xcode 16 on macOS, and use flutter test in Dart CI ([5d733a9](https://github.com/ibhanu/sarvam-mobile/commit/5d733a917d4d8d11548212ce3a95a927c0c75ab7))
+
 ## [0.1.0] - 2026-10-16
 
 ### Added
