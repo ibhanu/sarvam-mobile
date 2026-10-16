@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sarvam: ^0.1.0
+  sarvam: ^0.2.0
 
 dependency_overrides:
   sarvam:
