@@ -272,29 +272,26 @@ jobs:
           
           echo "### Running flutter pub get" >> $GITHUB_STEP_SUMMARY
           if ! flutter pub get > /tmp/pub_get.log 2>&1; then
-            echo "❌ flutter pub get failed:" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat /tmp/pub_get.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/pub_get.log
+            msg=$(head -n 20 /tmp/pub_get.log | tr '\n' ' ' | tr -d '\r')
+            echo "::error title=flutter pub get failed::${msg}"
             exit 1
           fi
           
           echo "### Running flutter analyze" >> $GITHUB_STEP_SUMMARY
           if ! flutter analyze --fatal-infos > /tmp/analyze.log 2>&1; then
-            echo "❌ flutter analyze failed:" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat /tmp/analyze.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/analyze.log
+            msg=$(head -n 20 /tmp/analyze.log | tr '\n' ' ' | tr -d '\r')
+            echo "::error title=flutter analyze failed::${msg}"
             exit 1
           fi
           
           if [ -d "test" ]; then
             echo "### Running flutter test --coverage" >> $GITHUB_STEP_SUMMARY
             if ! flutter test --coverage > /tmp/test.log 2>&1; then
-              echo "❌ flutter test failed:" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              cat /tmp/test.log >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+              cat /tmp/test.log
+              msg=$(head -n 20 /tmp/test.log | tr '\n' ' ' | tr -d '\r')
+              echo "::error title=flutter test failed::${msg}"
               exit 1
             fi
             echo "✅ flutter test passed" >> $GITHUB_STEP_SUMMARY
@@ -308,29 +305,26 @@ jobs:
           
           echo "### Running flutter pub get" >> $GITHUB_STEP_SUMMARY
           if ! flutter pub get > /tmp/pub_get_audio.log 2>&1; then
-            echo "❌ flutter pub get failed:" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat /tmp/pub_get_audio.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/pub_get_audio.log
+            msg=$(head -n 20 /tmp/pub_get_audio.log | tr '\n' ' ' | tr -d '\r')
+            echo "::error title=flutter pub get audio failed::${msg}"
             exit 1
           fi
           
           echo "### Running flutter analyze" >> $GITHUB_STEP_SUMMARY
           if ! flutter analyze --fatal-infos > /tmp/analyze_audio.log 2>&1; then
-            echo "❌ flutter analyze failed:" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat /tmp/analyze_audio.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/analyze_audio.log
+            msg=$(head -n 20 /tmp/analyze_audio.log | tr '\n' ' ' | tr -d '\r')
+            echo "::error title=flutter analyze audio failed::${msg}"
             exit 1
           fi
           
           if [ -d "test" ]; then
             echo "### Running flutter test --coverage" >> $GITHUB_STEP_SUMMARY
             if ! flutter test --coverage > /tmp/test_audio.log 2>&1; then
-              echo "❌ flutter test failed:" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              cat /tmp/test_audio.log >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+              cat /tmp/test_audio.log
+              msg=$(head -n 20 /tmp/test_audio.log | tr '\n' ' ' | tr -d '\r')
+              echo "::error title=flutter test audio failed::${msg}"
               exit 1
             fi
             echo "✅ flutter test passed" >> $GITHUB_STEP_SUMMARY
