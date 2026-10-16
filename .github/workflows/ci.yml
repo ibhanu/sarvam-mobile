@@ -264,20 +264,76 @@ jobs:
 
       - name: Analyze & Test Core Dart Package with Coverage
         run: |
+          set -e
           cd packages/dart/sarvam
-          flutter pub get
-          flutter analyze --fatal-infos
+          echo "## Step 6: Core Dart Package Diagnostics" >> $GITHUB_STEP_SUMMARY
+          echo "- Flutter: $(flutter --version | head -n 1)" >> $GITHUB_STEP_SUMMARY
+          echo "- Dart: $(dart --version)" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Running flutter pub get" >> $GITHUB_STEP_SUMMARY
+          if ! flutter pub get > /tmp/pub_get.log 2>&1; then
+            echo "❌ flutter pub get failed:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/pub_get.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          echo "### Running flutter analyze" >> $GITHUB_STEP_SUMMARY
+          if ! flutter analyze --fatal-infos > /tmp/analyze.log 2>&1; then
+            echo "❌ flutter analyze failed:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/analyze.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
           if [ -d "test" ]; then
-            flutter test --coverage
+            echo "### Running flutter test --coverage" >> $GITHUB_STEP_SUMMARY
+            if ! flutter test --coverage > /tmp/test.log 2>&1; then
+              echo "❌ flutter test failed:" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              cat /tmp/test.log >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+            echo "✅ flutter test passed" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Analyze & Test Companion Flutter Audio Package with Coverage
         run: |
+          set -e
           cd packages/dart/sarvam_flutter_audio
-          flutter pub get
-          flutter analyze --fatal-infos
+          echo "## Step 7: Flutter Audio Package Diagnostics" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### Running flutter pub get" >> $GITHUB_STEP_SUMMARY
+          if ! flutter pub get > /tmp/pub_get_audio.log 2>&1; then
+            echo "❌ flutter pub get failed:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/pub_get_audio.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          echo "### Running flutter analyze" >> $GITHUB_STEP_SUMMARY
+          if ! flutter analyze --fatal-infos > /tmp/analyze_audio.log 2>&1; then
+            echo "❌ flutter analyze failed:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat /tmp/analyze_audio.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
           if [ -d "test" ]; then
-            flutter test --coverage
+            echo "### Running flutter test --coverage" >> $GITHUB_STEP_SUMMARY
+            if ! flutter test --coverage > /tmp/test_audio.log 2>&1; then
+              echo "❌ flutter test failed:" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              cat /tmp/test_audio.log >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+            echo "✅ flutter test passed" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Stop Conformance Mock Server
