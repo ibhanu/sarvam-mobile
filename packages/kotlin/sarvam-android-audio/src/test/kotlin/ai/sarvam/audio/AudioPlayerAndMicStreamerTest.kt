@@ -341,7 +341,7 @@ class AudioPlayerAndMicStreamerTest {
                 received = true
                 break
             }
-            Thread.sleep(10)
+            kotlinx.coroutines.delay(10)
         }
         assertTrue(received)
 
