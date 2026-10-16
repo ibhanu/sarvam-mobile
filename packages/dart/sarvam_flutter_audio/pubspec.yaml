@@ -14,10 +14,6 @@ dependencies:
     sdk: flutter
   sarvam: ^0.2.0
 
-dependency_overrides:
-  sarvam:
-    path: ../sarvam
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
