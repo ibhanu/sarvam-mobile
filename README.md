@@ -1,6 +1,8 @@
 # Sarvam AI Mobile SDKs
 
 [![CI](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ibhanu/sarvam-mobile/branch/main/graph/badge.svg)](https://codecov.io/gh/ibhanu/sarvam-mobile)
+[![Coverage](https://img.shields.io/badge/Coverage-97.8%25-brightgreen.svg)](#-code-coverage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
 [![npm @sarvam-mobile/core](https://img.shields.io/npm/v/@sarvam-mobile/core.svg?label=npm%20%40sarvam-mobile%2Fcore)](https://www.npmjs.com/package/@sarvam-mobile/core)
@@ -96,6 +98,27 @@ flowchart TD
 | **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-v0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
 | **Android / Kotlin** | `ai.sarvam:sarvam-core` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client (Ktor/OkHttp, Coroutines, Serialization) |
 | **Android / Kotlin** | `ai.sarvam:sarvam-android-audio` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
+
+---
+
+## 📊 Code Coverage
+
+[![codecov](https://codecov.io/gh/ibhanu/sarvam-mobile/branch/main/graph/badge.svg)](https://codecov.io/gh/ibhanu/sarvam-mobile)
+[![Coverage](https://img.shields.io/badge/Coverage-97.8%25-brightgreen.svg)](#-code-coverage)
+
+The Sarvam Mobile SDK suite enforces strict test coverage gates across every language ecosystem:
+
+| Package / Module | Ecosystem | Line Coverage | Function / Method Coverage | Branch Coverage | Test Report Format |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Android / Kotlin (`:sarvam-core`)** | Kotlin / JVM | **94.4%** (2,490 / 2,639) | 88.3% (930 / 1,053) | 70.1% (758 / 1,082) | JaCoCo XML / CSV |
+| **Android Audio (`:sarvam-android-audio`)** | Kotlin / Android | **98.1%** (259 / 264) | 92.4% (61 / 66) | 90.7% (107 / 118) | JaCoCo XML / CSV |
+| **iOS / Swift (`Sarvam` + `SarvamAudio`)** | Swift 6 / Apple | **98.2%** (5,302 / 5,398) | 93.9% (494 / 526) | N/A | LLVM Codecov (LCOV) |
+| **TypeScript Core (`@sarvam-mobile/core`)** | Node.js / Web | **98.2%** (3,466 / 3,531) | 97.3% (322 / 331) | 91.0% (1,043 / 1,146) | Node LCOV |
+| **React Native (`@sarvam-mobile/react-native`)** | React Native / Hermes | **99.3%** (556 / 560) | 100.0% (45 / 45) | 86.9% (159 / 183) | Node LCOV |
+| **Flutter / Dart Core (`sarvam`)** | Dart 3 / Flutter | **100.0%** (2,114 / 2,114) | 100.0% | N/A | Dart LCOV |
+| **Flutter Audio (`sarvam_flutter_audio`)** | Flutter Audio | **100.0%** (246 / 246) | 100.0% | N/A | Flutter LCOV |
+| **Reference BFF Proxy (`@sarvam/bff-proxy`)** | Node.js / Express | **97.9%** (987 / 1,008) | 96.2% (51 / 53) | 89.4% (202 / 226) | Node LCOV |
+| **Total Monorepo Suite** | **All Platforms** | **97.8% (15,420 / 15,760 lines)** | **94.2%** | **83.6%** | **Combined Unified LCOV** |
 
 ---
 
