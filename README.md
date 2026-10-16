@@ -4,7 +4,16 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
 
-Official client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech and language platform, engineered specifically for production mobile applications across **Android (Kotlin)**, **iOS (Swift)**, **React Native**, and **Flutter (Dart)**.
+## 📌 About
+
+**Sarvam Mobile** provides the official, production-ready mobile client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech, translation, and language APIs[cite: 1]. 
+
+Designed from the ground up to support modern mobile client architectures across **Android (Kotlin)**, **iOS (Swift)**, **React Native**, and **Flutter (Dart)**, the monorepo separates core network communication from platform hardware[cite: 1]:
+
+- **Decoupled Architecture**: Core client packages contain zero hardware or OS audio framework dependencies, making them lightweight, headless, and strictly cross-platform[cite: 1].
+- **Companion Audio Engines**: Dedicated companion packages handle low-latency hardware audio capture, 16 kHz PCM conversion, and streaming playback per platform[cite: 1].
+- **Mobile-First Security**: Built-in credential layers featuring `TokenAuth` (single-flight request coalescing, proactive refresh) and `ProxyAuth` to keep production API keys off the client binary[cite: 1].
+- **Indic Language Pipeline**: First-class streaming and REST interfaces for translation, speech-to-text, text-to-speech, and dubbing pipelines across 11+ Indian languages[cite: 1].
 
 ---
 
