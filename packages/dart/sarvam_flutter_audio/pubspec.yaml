@@ -1,9 +1,9 @@
 name: sarvam_flutter_audio
-version: 0.2.0
+version: 0.2.1
 description: Companion audio capture, 16 kHz resampling, and audio playback for Sarvam AI Flutter apps.
 homepage: https://sarvam.ai
-repository: https://github.com/sarvamai/sarvam-mobile/tree/main/packages/dart/sarvam_flutter_audio
-issue_tracker: https://github.com/sarvamai/sarvam-mobile/issues
+repository: https://github.com/ibhanu/sarvam-mobile/tree/main/packages/dart/sarvam_flutter_audio
+issue_tracker: https://github.com/ibhanu/sarvam-mobile/issues
 
 environment:
   sdk: ^3.4.0
@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sarvam: ^0.2.0
+  sarvam: ^0.2.1
 
 dev_dependencies:
   flutter_test:

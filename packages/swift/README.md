@@ -16,7 +16,7 @@ Add the dependency in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sarvamai/sarvam-mobile.git", from: "0.1.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.0")
 ],
 targets: [
     .target(
@@ -31,7 +31,7 @@ targets: [
 
 Or in Xcode:
 1. Navigate to **File** > **Add Package Dependencies...**
-2. Paste `https://github.com/sarvamai/sarvam-mobile.git` into the search bar.
+2. Paste `https://github.com/ibhanu/sarvam-mobile.git` into the search bar.
 3. Select your project target and choose `Sarvam` (and optionally `SarvamAudio`).
 
 ### 2. Mobile Authentication Setup

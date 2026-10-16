@@ -24,7 +24,7 @@ publishing {
             pom {
                 name.set("sarvam-android-audio")
                 description.set("Audio capture, 16 kHz PCM resampling, and playback for Sarvam AI Android/Kotlin apps")
-                url.set("https://github.com/sarvamai/sarvam-mobile")
+                url.set("https://github.com/ibhanu/sarvam-mobile")
                 inceptionYear.set("2026")
                 licenses {
                     license {
@@ -41,9 +41,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/sarvamai/sarvam-mobile.git")
-                    developerConnection.set("scm:git:ssh://github.com:sarvamai/sarvam-mobile.git")
-                    url.set("https://github.com/sarvamai/sarvam-mobile")
+                    connection.set("scm:git:git://github.com/ibhanu/sarvam-mobile.git")
+                    developerConnection.set("scm:git:ssh://github.com:ibhanu/sarvam-mobile.git")
+                    url.set("https://github.com/ibhanu/sarvam-mobile")
                 }
             }
         }

@@ -7,7 +7,7 @@
   "homepage": "https://sarvam.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sarvamai/sarvam-mobile.git",
+    "url": "git+https://github.com/ibhanu/sarvam-mobile.git",
     "directory": "packages/ts-core"
   },
   "publishConfig": {

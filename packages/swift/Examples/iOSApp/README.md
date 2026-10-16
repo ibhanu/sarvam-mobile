@@ -58,7 +58,7 @@ Ensure your Xcode project links both `Sarvam` and `SarvamAudio` via Swift Packag
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sarvamai/sarvam-mobile.git", from: "0.1.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.0")
 ]
 ```
 
