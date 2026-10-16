@@ -1,0 +1,22 @@
+id: "ws-stt-invalid-sample-rate"
+category: "ws"
+operation: "speechToText.connect"
+title: "WebSocket STT Realtime Invalid Sample Rate Rejection"
+description: "Verifies sample rate other than 16000 or 8000 is rejected client-side with BadRequestError, or server-side closes socket with code 4000"
+mockScenario: "stt-invalid-sample-rate"
+
+connection:
+  path: "/speech-to-text-realtime/ws"
+  queryParams:
+    language_code: "hi-IN"
+    sample_rate: "44100"
+  headers:
+    Api-Subscription-Key: "test-api-key"
+
+expectedServerClose:
+  code: 4000
+  reason: "Invalid sample_rate: must be 16000 or 8000"
+
+clientValidation:
+  expectedError: "BadRequestError"
+  messageContains: "sampleRate must be 16000 or 8000"

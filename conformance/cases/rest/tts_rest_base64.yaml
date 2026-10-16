@@ -1,0 +1,38 @@
+id: "rest-tts-base64-decoding"
+category: "rest"
+operation: "textToSpeech.convert"
+title: "TTS REST Base64 Audio Decoding"
+description: "Verifies textToSpeech.convert returning base64 audio string in audios[0].audio decodes to identical binary audio bytes via audioBytes property"
+operationKind: "STATELESS_POST"
+mockScenario: "tts-rest-base64"
+
+request:
+  method: "POST"
+  path: "/text-to-speech"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "tts-rest-base64"
+  body:
+    text: "नमस्ते दुनिया"
+    target_language_code: "hi-IN"
+    speaker: "meera"
+    model: "bulbul:v3"
+
+expected:
+  status: 200
+  headers:
+    content-type: "application/json"
+  body:
+    audios:
+      - audio: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+  audioAssertion:
+    base64Payload: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+    byteLength: 44
+    magicBytesHex: "52494646" # RIFF
+    formatHex: "57415645" # WAVE
+  sdkResponse:
+    type: "TextToSpeechResponse"
+    audioCount: 1
+    firstAudioBase64: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+    firstAudioByteLength: 44

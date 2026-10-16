@@ -1,0 +1,43 @@
+id: "ws-tts-streaming"
+category: "ws"
+operation: "textToSpeech.connect"
+title: "WebSocket TTS Streaming Full Conversational Turn"
+description: "Verifies WS handshake, sending initial config frame, text frame, flush frame, and server emitting 2 audio chunks and final event"
+mockScenario: "tts-streaming"
+
+connection:
+  path: "/text-to-speech/ws"
+  queryParams:
+    model: "bulbul:v4-flash"
+    send_completion_event: "true"
+  headers:
+    Api-Subscription-Key: "test-api-key"
+
+clientFrames:
+  - type: "config"
+    data:
+      language_code: "hi-IN"
+      speaker: "simran_en_customer"
+      model: "bulbul:v4-flash"
+      speech_sample_rate: 22050
+      output_audio_codec: "mp3"
+  - type: "text"
+    data:
+      text: "नमस्ते भारत"
+  - type: "flush"
+
+expectedServerFrames:
+  - type: "audio"
+    data:
+      audio: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+  - type: "audio"
+    data:
+      audio: "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+  - type: "event"
+    data:
+      event: "final"
+
+assertions:
+  audioFramesCount: 2
+  audioChunkByteLength: 44
+  receivedCompletionEvent: true

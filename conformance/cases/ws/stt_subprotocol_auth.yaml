@@ -1,0 +1,31 @@
+id: "ws-stt-subprotocol-auth"
+category: "ws"
+operation: "speechToText.connect"
+title: "WebSocket STT Realtime Subprotocol Authentication"
+description: "Verifies browser/React-Native compatible authentication via Sec-WebSocket-Protocol: api-subscription-key.<key> without custom HTTP handshake headers"
+mockScenario: "stt-subprotocol-auth"
+
+connection:
+  path: "/speech-to-text-realtime/ws"
+  queryParams:
+    language_code: "hi-IN"
+    model: "saaras:v3-realtime"
+  subprotocols:
+    - "api-subscription-key.test-api-key"
+
+expectedHandshakeResponse:
+  selectedSubprotocol: "api-subscription-key.test-api-key"
+
+clientFrames:
+  - event: "audio_input"
+    audio: "AAAA"
+  - event: "end"
+
+expectedServerFrames:
+  - event: "session_begin"
+    session_id: "sess_subprotocol_001"
+  - event: "transcript_final"
+    utterance_idx: 0
+    text: "नमस्ते!"
+    language: "hi-IN"
+  - event: "session_end"

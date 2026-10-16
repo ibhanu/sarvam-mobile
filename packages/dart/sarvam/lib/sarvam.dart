@@ -1,0 +1,53 @@
+/// Official Dart & Flutter client SDK for Sarvam AI's Indic language models and speech services.
+library sarvam;
+
+export 'src/client.dart';
+export 'src/core/auth_provider.dart';
+export 'src/core/clock.dart';
+export 'src/core/credentials.dart';
+export 'src/core/environment.dart';
+export 'src/core/exceptions.dart';
+export 'src/core/file_input.dart';
+export 'src/core/job_poller.dart';
+export 'src/core/middleware/auth_middleware.dart';
+export 'src/core/middleware/logging_middleware.dart';
+export 'src/core/middleware/middleware.dart';
+export 'src/core/middleware/retry_middleware.dart';
+export 'src/core/middleware/user_agent_middleware.dart';
+export 'src/core/package_http_transport.dart';
+export 'src/core/request_options.dart';
+export 'src/core/sse/sse_event.dart';
+export 'src/core/sse/sse_transformer.dart';
+export 'src/core/transport.dart';
+export 'src/core/websocket_factory.dart';
+export 'src/generated/sarvam_spec_generated.dart';
+export 'src/models/chat_models.dart';
+export 'src/models/doc_ai_models.dart';
+export 'src/models/document_translation_models.dart';
+export 'src/models/dubbing_models.dart';
+export 'src/models/pronunciation_dictionary_models.dart';
+export 'src/models/response_models.dart';
+export 'src/models/speech_to_text_job_models.dart';
+export 'src/models/speech_to_text_models.dart';
+export 'src/models/text_models.dart';
+export 'src/models/text_to_speech_models.dart';
+export 'src/models/voice_cloning_models.dart';
+export 'src/realtime/stt_realtime_events.dart';
+export 'src/realtime/stt_realtime_session.dart';
+export 'src/realtime/tts_streaming_events.dart';
+export 'src/realtime/tts_streaming_session.dart';
+export 'src/resources/chat_resource.dart';
+export 'src/resources/doc_ai_resource.dart';
+export 'src/resources/document_translation_resource.dart';
+export 'src/resources/dubbing_resource.dart';
+export 'src/resources/jobs_resource.dart';
+export 'src/resources/pronunciation_dictionary_resource.dart';
+export 'src/resources/responses_resource.dart';
+export 'src/resources/speech_to_text_job_resource.dart';
+export 'src/resources/speech_to_text_resource.dart';
+export 'src/resources/text_resource.dart';
+export 'src/resources/text_to_speech_resource.dart';
+export 'src/resources/voice_cloning_resource.dart';
+
+/// Current version of the Sarvam Dart SDK.
+const String sarvamSdkVersion = '0.1.0';

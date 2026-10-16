@@ -1,0 +1,49 @@
+id: "rest-token-auth-refresh"
+category: "rest"
+operation: "text.translate"
+title: "TokenAuth Invalidation and Single Retry on 403"
+description: "Verifies TokenAuth invalidates expired cached token upon receiving HTTP 403 invalid_api_key_error, refreshes credentials, and succeeds on single retry"
+operationKind: "STATELESS_POST"
+mockScenario: "token-auth-refresh"
+
+attempts:
+  - attempt: 1
+    request:
+      method: "POST"
+      path: "/translate"
+      headers:
+        Authorization: "Bearer expired-token"
+        content-type: "application/json"
+        x-mock-scenario: "token-auth-refresh"
+      body:
+        input: "Hello world"
+        source_language_code: "en-IN"
+        target_language_code: "hi-IN"
+    expectedStatus: 403
+    expectedBody:
+      error:
+        code: "invalid_api_key_error"
+        message: "Bearer token expired"
+        request_id: "req_token_expired"
+  - attempt: 2
+    request:
+      method: "POST"
+      path: "/translate"
+      headers:
+        Authorization: "Bearer refreshed-token"
+        content-type: "application/json"
+        x-mock-scenario: "token-auth-refresh"
+      body:
+        input: "Hello world"
+        source_language_code: "en-IN"
+        target_language_code: "hi-IN"
+    expectedStatus: 200
+    expectedBody:
+      translated_text: "नमस्ते दुनिया"
+
+expected:
+  totalAttempts: 2
+  retriesPerformed: 1
+  finalStatus: 200
+  body:
+    translated_text: "नमस्ते दुनिया"

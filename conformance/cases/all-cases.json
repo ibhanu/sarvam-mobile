@@ -1,0 +1,1033 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2026-10-16T06:06:56.476Z",
+  "totalCases": 19,
+  "categories": {
+    "rest": 12,
+    "sse": 3,
+    "ws": 4
+  },
+  "cases": [
+    {
+      "id": "rest-auth-error-quirk",
+      "category": "rest",
+      "operation": "text.translate",
+      "title": "Auth Error Quirk (HTTP 403 with invalid_api_key_error)",
+      "description": "Verifies HTTP 403 with code invalid_api_key_error maps to AuthenticationError (not PermissionDeniedError) and triggers token refresh when using TokenAuth",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "auth-invalid-api-key",
+      "request": {
+        "method": "POST",
+        "path": "/translate",
+        "headers": {
+          "api-subscription-key": "invalid-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "auth-invalid-api-key"
+        },
+        "body": {
+          "input": "Hello world",
+          "source_language_code": "en-IN",
+          "target_language_code": "hi-IN"
+        }
+      },
+      "expected": {
+        "status": 403,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_api_key_error",
+            "message": "Invalid API key",
+            "request_id": "req_auth_403"
+          }
+        },
+        "sdkError": {
+          "type": "AuthenticationError",
+          "code": "invalid_api_key_error",
+          "statusCode": 403,
+          "requestId": "req_auth_403",
+          "message": "Invalid API key",
+          "shouldTriggerTokenRefresh": true,
+          "shouldRetryWithBackoff": false,
+          "maxRetries": 1
+        }
+      }
+    },
+    {
+      "id": "rest-idempotent-retry-500",
+      "category": "rest",
+      "operation": "chat.listModels",
+      "title": "IDEMPOTENT GET Operation Retries on HTTP 500",
+      "description": "Verifies GET /v2/models (IDEMPOTENT) automatically retries upon receiving transient HTTP 500 Internal Server Error and succeeds on attempt 2",
+      "operationKind": "IDEMPOTENT",
+      "mockScenario": "server-error-retry",
+      "attempts": [
+        {
+          "attempt": 1,
+          "request": {
+            "method": "GET",
+            "path": "/v2/models",
+            "headers": {
+              "api-subscription-key": "test-api-key",
+              "x-mock-scenario": "server-error-retry"
+            }
+          },
+          "expectedStatus": 500,
+          "expectedBody": {
+            "error": {
+              "code": "internal_server_error",
+              "message": "Transient inference service failure",
+              "request_id": "req_glitch_500"
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "request": {
+            "method": "GET",
+            "path": "/v2/models",
+            "headers": {
+              "api-subscription-key": "test-api-key",
+              "x-mock-scenario": "server-error-retry"
+            }
+          },
+          "expectedStatus": 200,
+          "expectedBody": {
+            "models": [
+              {
+                "id": "sarvam-2b"
+              },
+              {
+                "id": "saaras:v3"
+              }
+            ]
+          }
+        }
+      ],
+      "expected": {
+        "totalAttempts": 2,
+        "retriesPerformed": 1,
+        "finalStatus": 200,
+        "body": {
+          "models": [
+            {
+              "id": "sarvam-2b"
+            },
+            {
+              "id": "saaras:v3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "rest-job-creation-safety-500",
+      "category": "rest",
+      "operation": "docAi.digitise",
+      "title": "Job Creation Safety on HTTP 500",
+      "description": "Verifies docAi.digitise returning HTTP 500 throws ServerError immediately with 0 retries because JOB_CREATE operations must not retry on 500 without Idempotency-Key",
+      "operationKind": "JOB_CREATE",
+      "mockScenario": "job-create-500",
+      "request": {
+        "method": "POST",
+        "path": "/doc-ai/v1/job/digitise",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "job-create-500"
+        },
+        "body": {
+          "language": "hi",
+          "output_format": "md"
+        }
+      },
+      "expected": {
+        "status": 500,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "error": {
+            "code": "internal_server_error",
+            "message": "Internal server error",
+            "request_id": "req_job_500"
+          }
+        },
+        "sdkError": {
+          "type": "ServerError",
+          "code": "internal_server_error",
+          "statusCode": 500,
+          "requestId": "req_job_500",
+          "message": "Internal server error",
+          "shouldRetry": false,
+          "maxRetries": 0
+        }
+      }
+    },
+    {
+      "id": "rest-permission-denied",
+      "category": "rest",
+      "operation": "text.translate",
+      "title": "Permission Denied (HTTP 403 with authentication_error)",
+      "description": "Verifies HTTP 403 with non-invalid_api_key_error code maps to PermissionDeniedError with no token refresh and no retry",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "auth-permission-denied",
+      "request": {
+        "method": "POST",
+        "path": "/translate",
+        "headers": {
+          "api-subscription-key": "tier-locked-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "auth-permission-denied"
+        },
+        "body": {
+          "input": "Hello world",
+          "source_language_code": "en-IN",
+          "target_language_code": "hi-IN"
+        }
+      },
+      "expected": {
+        "status": 403,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "error": {
+            "code": "authentication_error",
+            "message": "Tier locked",
+            "request_id": "req_perm_403"
+          }
+        },
+        "sdkError": {
+          "type": "PermissionDeniedError",
+          "code": "authentication_error",
+          "statusCode": 403,
+          "requestId": "req_perm_403",
+          "message": "Tier locked",
+          "shouldTriggerTokenRefresh": false,
+          "shouldRetryWithBackoff": false,
+          "maxRetries": 0
+        }
+      }
+    },
+    {
+      "id": "rest-rate-limit-retry",
+      "category": "rest",
+      "operation": "text.translate",
+      "title": "Rate Limit 429 Retry with retry-after-ms",
+      "description": "Verifies HTTP 429 with retry-after-ms: 50 on attempt 1, followed by HTTP 200 on attempt 2 succeeds after 1 retry",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "rate-limit-retry",
+      "request": {
+        "method": "POST",
+        "path": "/translate",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "rate-limit-retry"
+        },
+        "body": {
+          "input": "Hello retry",
+          "source_language_code": "en-IN",
+          "target_language_code": "hi-IN"
+        }
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "expectedStatus": 429,
+          "expectedHeaders": {
+            "retry-after-ms": "50",
+            "content-type": "application/json"
+          },
+          "expectedBody": {
+            "error": {
+              "code": "rate_limit_exceeded_error",
+              "message": "Rate limit exceeded",
+              "request_id": "req_rl_1"
+            }
+          },
+          "parsedRetryAfterMs": 50
+        },
+        {
+          "attempt": 2,
+          "expectedStatus": 200,
+          "expectedHeaders": {
+            "content-type": "application/json"
+          },
+          "expectedBody": {
+            "translated_text": "नमस्ते पुनः प्रयास"
+          }
+        }
+      ],
+      "expected": {
+        "totalAttempts": 2,
+        "retriesPerformed": 1,
+        "finalStatus": 200,
+        "body": {
+          "translated_text": "नमस्ते पुनः प्रयास"
+        },
+        "sdkResponse": {
+          "type": "TranslateResponse",
+          "translatedText": "नमस्ते पुनः प्रयास"
+        }
+      }
+    },
+    {
+      "id": "rest-sas-blob-upload",
+      "category": "rest",
+      "operation": "jobs.uploadToSignedUrl",
+      "title": "Azure SAS Blob Upload Header Validation",
+      "description": "Verifies PUT /mock-sas-upload requires mandatory header x-ms-blob-type: BlockBlob and rejects with 400 if missing",
+      "operationKind": "IDEMPOTENT",
+      "mockScenario": "sas-blob-upload",
+      "validRequest": {
+        "method": "PUT",
+        "path": "/mock-sas-upload",
+        "headers": {
+          "x-ms-blob-type": "BlockBlob",
+          "content-type": "application/octet-stream"
+        },
+        "body": "mock-audio-binary-data",
+        "expectedStatus": 201,
+        "expectedHeaders": {
+          "x-ms-request-id": "mock-azure-req-1"
+        }
+      },
+      "missingHeaderRequest": {
+        "method": "PUT",
+        "path": "/mock-sas-upload",
+        "headers": {
+          "content-type": "application/octet-stream"
+        },
+        "body": "mock-audio-binary-data",
+        "expectedStatus": 400,
+        "expectedHeaders": {
+          "content-type": "application/json"
+        },
+        "expectedBody": {
+          "error": {
+            "code": "MissingRequiredHeader",
+            "message": "Mandatory header x-ms-blob-type: BlockBlob missing"
+          }
+        },
+        "sdkError": {
+          "type": "BadRequestError",
+          "code": "MissingRequiredHeader",
+          "statusCode": 400
+        }
+      }
+    },
+    {
+      "id": "rest-text-identify-language-success",
+      "category": "rest",
+      "operation": "text.identifyLanguage",
+      "title": "REST text.identifyLanguage Success",
+      "description": "Verifies api-subscription-key header, request JSON body, and language detection decoding",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "default",
+      "request": {
+        "method": "POST",
+        "path": "/text-lid",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json"
+        },
+        "body": {
+          "input": "नमस्ते दुनिया"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "detected_language": "hi-IN",
+          "confidence": 0.99
+        },
+        "sdkResponse": {
+          "type": "TextLidResponse",
+          "detectedLanguage": "hi-IN",
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "id": "rest-text-translate-success",
+      "category": "rest",
+      "operation": "text.translate",
+      "title": "REST text.translate Success",
+      "description": "Verifies api-subscription-key header, request JSON body, and response decoding",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "default",
+      "request": {
+        "method": "POST",
+        "path": "/translate",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json"
+        },
+        "body": {
+          "input": "Hello world",
+          "source_language_code": "en-IN",
+          "target_language_code": "hi-IN",
+          "speaker_gender": "Male",
+          "mode": "formal",
+          "model": "mayura:v1"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "translated_text": "नमस्ते दुनिया"
+        },
+        "sdkResponse": {
+          "type": "TranslateResponse",
+          "translatedText": "नमस्ते दुनिया"
+        }
+      }
+    },
+    {
+      "id": "rest-text-transliterate-success",
+      "category": "rest",
+      "operation": "text.transliterate",
+      "title": "REST text.transliterate Success",
+      "description": "Verifies api-subscription-key header, request JSON body, and transliterated response decoding",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "default",
+      "request": {
+        "method": "POST",
+        "path": "/transliterate",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json"
+        },
+        "body": {
+          "input": "namaste",
+          "source_language_code": "en-IN",
+          "target_language_code": "hi-IN"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "transliterated_text": "नमस्ते"
+        },
+        "sdkResponse": {
+          "type": "TransliterateResponse",
+          "transliteratedText": "नमस्ते"
+        }
+      }
+    },
+    {
+      "id": "rest-token-auth-refresh",
+      "category": "rest",
+      "operation": "text.translate",
+      "title": "TokenAuth Invalidation and Single Retry on 403",
+      "description": "Verifies TokenAuth invalidates expired cached token upon receiving HTTP 403 invalid_api_key_error, refreshes credentials, and succeeds on single retry",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "token-auth-refresh",
+      "attempts": [
+        {
+          "attempt": 1,
+          "request": {
+            "method": "POST",
+            "path": "/translate",
+            "headers": {
+              "Authorization": "Bearer expired-token",
+              "content-type": "application/json",
+              "x-mock-scenario": "token-auth-refresh"
+            },
+            "body": {
+              "input": "Hello world",
+              "source_language_code": "en-IN",
+              "target_language_code": "hi-IN"
+            }
+          },
+          "expectedStatus": 403,
+          "expectedBody": {
+            "error": {
+              "code": "invalid_api_key_error",
+              "message": "Bearer token expired",
+              "request_id": "req_token_expired"
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "request": {
+            "method": "POST",
+            "path": "/translate",
+            "headers": {
+              "Authorization": "Bearer refreshed-token",
+              "content-type": "application/json",
+              "x-mock-scenario": "token-auth-refresh"
+            },
+            "body": {
+              "input": "Hello world",
+              "source_language_code": "en-IN",
+              "target_language_code": "hi-IN"
+            }
+          },
+          "expectedStatus": 200,
+          "expectedBody": {
+            "translated_text": "नमस्ते दुनिया"
+          }
+        }
+      ],
+      "expected": {
+        "totalAttempts": 2,
+        "retriesPerformed": 1,
+        "finalStatus": 200,
+        "body": {
+          "translated_text": "नमस्ते दुनिया"
+        }
+      }
+    },
+    {
+      "id": "rest-tts-chunked-stream",
+      "category": "rest",
+      "operation": "textToSpeech.stream",
+      "title": "TTS HTTP Chunked Binary Audio Stream",
+      "description": "Verifies POST /text-to-speech/stream returning chunked binary audio stream yields 3 chunks concatenating into expected byte length and content",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "tts-chunked-stream",
+      "request": {
+        "method": "POST",
+        "path": "/text-to-speech/stream",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "tts-chunked-stream"
+        },
+        "body": {
+          "text": "नमस्ते भारत",
+          "target_language_code": "hi-IN",
+          "speaker": "meera"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/octet-stream",
+          "transfer-encoding": "chunked"
+        },
+        "chunks": [
+          {
+            "index": 0,
+            "byteLength": 16,
+            "hex": "0102030405060708090a0b0c0d0e0f10"
+          },
+          {
+            "index": 1,
+            "byteLength": 16,
+            "hex": "1112131415161718191a1b1c1d1e1f20"
+          },
+          {
+            "index": 2,
+            "byteLength": 16,
+            "hex": "2122232425262728292a2b2c2d2e2f30"
+          }
+        ],
+        "totalChunks": 3,
+        "totalByteLength": 48,
+        "concatenatedHex": "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30"
+      }
+    },
+    {
+      "id": "rest-tts-base64-decoding",
+      "category": "rest",
+      "operation": "textToSpeech.convert",
+      "title": "TTS REST Base64 Audio Decoding",
+      "description": "Verifies textToSpeech.convert returning base64 audio string in audios[0].audio decodes to identical binary audio bytes via audioBytes property",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "tts-rest-base64",
+      "request": {
+        "method": "POST",
+        "path": "/text-to-speech",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "tts-rest-base64"
+        },
+        "body": {
+          "text": "नमस्ते दुनिया",
+          "target_language_code": "hi-IN",
+          "speaker": "meera",
+          "model": "bulbul:v3"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "audios": [
+            {
+              "audio": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+            }
+          ]
+        },
+        "audioAssertion": {
+          "base64Payload": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=",
+          "byteLength": 44,
+          "magicBytesHex": "52494646",
+          "formatHex": "57415645"
+        },
+        "sdkResponse": {
+          "type": "TextToSpeechResponse",
+          "audioCount": 1,
+          "firstAudioBase64": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=",
+          "firstAudioByteLength": 44
+        }
+      }
+    },
+    {
+      "id": "sse-chat-v1-stream",
+      "category": "sse",
+      "operation": "chat.completionsStream",
+      "title": "Chat V1 Standard SSE Streaming",
+      "description": "Verifies standard OpenAI-compatible POST /v1/chat/completions with stream: true streaming delta tokens and terminating on data: [DONE]",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "chat-v1-stream",
+      "request": {
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "headers": {
+          "Authorization": "Bearer test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "chat-v1-stream"
+        },
+        "body": {
+          "model": "sarvam-2b",
+          "stream": true,
+          "messages": [
+            {
+              "role": "user",
+              "content": "Hi"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/event-stream"
+        },
+        "rawSsePayload": "data: {\"id\":\"chatcmpl-v1-1\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Hi\"}}]}\n\ndata: {\"id\":\"chatcmpl-v1-1\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" there!\"}}]}\n\ndata: [DONE]\n",
+        "chunks": [
+          {
+            "type": "data",
+            "parsed": {
+              "id": "chatcmpl-v1-1",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Hi"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "data",
+            "parsed": {
+              "id": "chatcmpl-v1-1",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " there!"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "done",
+            "raw": "[DONE]"
+          }
+        ],
+        "assertions": {
+          "accumulatedContent": "Hi there!",
+          "terminatedOnDone": true
+        }
+      }
+    },
+    {
+      "id": "sse-chat-v2-empty-choices",
+      "category": "sse",
+      "operation": "chat.completionsV2Stream",
+      "title": "Chat V2 SSE Stream with Empty Choices Usage Chunk",
+      "description": "Verifies POST /v2/chat/completions with stream: true handles 2 content deltas, 1 usage chunk with choices: [] without throwing index out-of-bounds error, and terminates cleanly on data: [DONE]",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "chat-v2-sse-empty-choices",
+      "request": {
+        "method": "POST",
+        "path": "/v2/chat/completions",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "chat-v2-sse-empty-choices"
+        },
+        "body": {
+          "model": "sarvam-2b",
+          "stream": true,
+          "messages": [
+            {
+              "role": "user",
+              "content": "Hello"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/event-stream"
+        },
+        "rawSsePayload": "data: {\"id\":\"chatcmpl-1\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Namaste\"}}]}\n\ndata: {\"id\":\"chatcmpl-1\",\"choices\":[{\"index\":0,\"delta\":{\"content\":\" world\"}}]}\n\ndata: {\"id\":\"chatcmpl-1\",\"choices\":[],\"usage\":{\"prompt_tokens\":8,\"completion_tokens\":2,\"total_tokens\":10}}\n\ndata: [DONE]\n",
+        "chunks": [
+          {
+            "type": "data",
+            "parsed": {
+              "id": "chatcmpl-1",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": "Namaste"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "data",
+            "parsed": {
+              "id": "chatcmpl-1",
+              "choices": [
+                {
+                  "index": 0,
+                  "delta": {
+                    "content": " world"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "data",
+            "parsed": {
+              "id": "chatcmpl-1",
+              "choices": [],
+              "usage": {
+                "prompt_tokens": 8,
+                "completion_tokens": 2,
+                "total_tokens": 10
+              }
+            }
+          },
+          {
+            "type": "done",
+            "raw": "[DONE]"
+          }
+        ],
+        "assertions": {
+          "accumulatedContent": "Namaste world",
+          "finalUsage": {
+            "prompt_tokens": 8,
+            "completion_tokens": 2,
+            "total_tokens": 10
+          },
+          "noChoicesCrashOnUsage": true,
+          "terminatedOnDone": true
+        }
+      }
+    },
+    {
+      "id": "sse-responses-api-no-done",
+      "category": "sse",
+      "operation": "responses.createStream",
+      "title": "Responses API SSE Stream (No [DONE] Sentinel Line)",
+      "description": "Verifies POST /v2/responses emits structured SSE events and cleanly terminates upon receiving event: response.completed without hanging waiting for data: [DONE]",
+      "operationKind": "STATELESS_POST",
+      "mockScenario": "responses-sse-no-done",
+      "request": {
+        "method": "POST",
+        "path": "/v2/responses",
+        "headers": {
+          "api-subscription-key": "test-api-key",
+          "content-type": "application/json",
+          "x-mock-scenario": "responses-sse-no-done"
+        },
+        "body": {
+          "model": "glm-5.3",
+          "input": "Explain quantum computing briefly"
+        }
+      },
+      "expected": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/event-stream"
+        },
+        "rawSsePayload": "event: response.created\ndata: {\"id\":\"resp_001\",\"type\":\"response.created\"}\n\nevent: response.output_item.added\ndata: {\"id\":\"resp_001\",\"type\":\"response.output_item.added\",\"item\":{\"id\":\"item_001\",\"type\":\"message\",\"role\":\"assistant\"}}\n\nevent: response.content_part.added\ndata: {\"id\":\"resp_001\",\"type\":\"response.content_part.added\",\"item_id\":\"item_001\",\"part\":{\"type\":\"text\",\"text\":\"Quantum computers use qubits.\"}}\n\nevent: response.completed\ndata: {\"id\":\"resp_001\",\"type\":\"response.completed\",\"response\":{\"status\":\"completed\"}}\n",
+        "events": [
+          {
+            "event": "response.created",
+            "data": {
+              "id": "resp_001",
+              "type": "response.created"
+            }
+          },
+          {
+            "event": "response.output_item.added",
+            "data": {
+              "id": "resp_001",
+              "type": "response.output_item.added",
+              "item": {
+                "id": "item_001",
+                "type": "message",
+                "role": "assistant"
+              }
+            }
+          },
+          {
+            "event": "response.content_part.added",
+            "data": {
+              "id": "resp_001",
+              "type": "response.content_part.added",
+              "item_id": "item_001",
+              "part": {
+                "type": "text",
+                "text": "Quantum computers use qubits."
+              }
+            }
+          },
+          {
+            "event": "response.completed",
+            "data": {
+              "id": "resp_001",
+              "type": "response.completed",
+              "response": {
+                "status": "completed"
+              }
+            }
+          }
+        ],
+        "assertions": {
+          "hasDoneSentinel": false,
+          "terminatesOnEvent": "response.completed",
+          "finalResponseStatus": "completed"
+        }
+      }
+    },
+    {
+      "id": "ws-stt-invalid-sample-rate",
+      "category": "ws",
+      "operation": "speechToText.connect",
+      "title": "WebSocket STT Realtime Invalid Sample Rate Rejection",
+      "description": "Verifies sample rate other than 16000 or 8000 is rejected client-side with BadRequestError, or server-side closes socket with code 4000",
+      "mockScenario": "stt-invalid-sample-rate",
+      "connection": {
+        "path": "/speech-to-text-realtime/ws",
+        "queryParams": {
+          "language_code": "hi-IN",
+          "sample_rate": "44100"
+        },
+        "headers": {
+          "Api-Subscription-Key": "test-api-key"
+        }
+      },
+      "expectedServerClose": {
+        "code": 4000,
+        "reason": "Invalid sample_rate: must be 16000 or 8000"
+      },
+      "clientValidation": {
+        "expectedError": "BadRequestError",
+        "messageContains": "sampleRate must be 16000 or 8000"
+      }
+    },
+    {
+      "id": "ws-stt-realtime",
+      "category": "ws",
+      "operation": "speechToText.connect",
+      "title": "WebSocket STT Realtime Full Turn",
+      "description": "Verifies WS handshake with Api-Subscription-Key header, client streaming audio_input, and server emitting session_begin, vad_speech_start, transcript_partial, transcript_final, and session_end",
+      "mockScenario": "stt-realtime",
+      "connection": {
+        "path": "/speech-to-text-realtime/ws",
+        "queryParams": {
+          "language_code": "hi-IN",
+          "model": "saaras:v3-realtime",
+          "sample_rate": "16000"
+        },
+        "headers": {
+          "Api-Subscription-Key": "test-api-key"
+        }
+      },
+      "clientFrames": [
+        {
+          "event": "audio_input",
+          "audio": "AAAA"
+        },
+        {
+          "event": "end"
+        }
+      ],
+      "expectedServerFrames": [
+        {
+          "event": "session_begin",
+          "session_id": "sess_stt_001"
+        },
+        {
+          "event": "vad_speech_start",
+          "timestamp_ms": 100
+        },
+        {
+          "event": "transcript_partial",
+          "utterance_idx": 0,
+          "text": "नमस्ते",
+          "language": "hi-IN"
+        },
+        {
+          "event": "transcript_final",
+          "utterance_idx": 0,
+          "text": "नमस्ते!",
+          "language": "hi-IN",
+          "language_confidence": 0.99,
+          "start_s": 0.1,
+          "end_s": 1.5
+        },
+        {
+          "event": "session_end"
+        }
+      ],
+      "assertions": {
+        "finalTranscript": "नमस्ते!",
+        "languageCode": "hi-IN",
+        "receivedSessionBegin": true,
+        "receivedSessionEnd": true
+      }
+    },
+    {
+      "id": "ws-stt-subprotocol-auth",
+      "category": "ws",
+      "operation": "speechToText.connect",
+      "title": "WebSocket STT Realtime Subprotocol Authentication",
+      "description": "Verifies browser/React-Native compatible authentication via Sec-WebSocket-Protocol: api-subscription-key.<key> without custom HTTP handshake headers",
+      "mockScenario": "stt-subprotocol-auth",
+      "connection": {
+        "path": "/speech-to-text-realtime/ws",
+        "queryParams": {
+          "language_code": "hi-IN",
+          "model": "saaras:v3-realtime"
+        },
+        "subprotocols": [
+          "api-subscription-key.test-api-key"
+        ]
+      },
+      "expectedHandshakeResponse": {
+        "selectedSubprotocol": "api-subscription-key.test-api-key"
+      },
+      "clientFrames": [
+        {
+          "event": "audio_input",
+          "audio": "AAAA"
+        },
+        {
+          "event": "end"
+        }
+      ],
+      "expectedServerFrames": [
+        {
+          "event": "session_begin",
+          "session_id": "sess_subprotocol_001"
+        },
+        {
+          "event": "transcript_final",
+          "utterance_idx": 0,
+          "text": "नमस्ते!",
+          "language": "hi-IN"
+        },
+        {
+          "event": "session_end"
+        }
+      ]
+    },
+    {
+      "id": "ws-tts-streaming",
+      "category": "ws",
+      "operation": "textToSpeech.connect",
+      "title": "WebSocket TTS Streaming Full Conversational Turn",
+      "description": "Verifies WS handshake, sending initial config frame, text frame, flush frame, and server emitting 2 audio chunks and final event",
+      "mockScenario": "tts-streaming",
+      "connection": {
+        "path": "/text-to-speech/ws",
+        "queryParams": {
+          "model": "bulbul:v4-flash",
+          "send_completion_event": "true"
+        },
+        "headers": {
+          "Api-Subscription-Key": "test-api-key"
+        }
+      },
+      "clientFrames": [
+        {
+          "type": "config",
+          "data": {
+            "language_code": "hi-IN",
+            "speaker": "simran_en_customer",
+            "model": "bulbul:v4-flash",
+            "speech_sample_rate": 22050,
+            "output_audio_codec": "mp3"
+          }
+        },
+        {
+          "type": "text",
+          "data": {
+            "text": "नमस्ते भारत"
+          }
+        },
+        {
+          "type": "flush"
+        }
+      ],
+      "expectedServerFrames": [
+        {
+          "type": "audio",
+          "data": {
+            "audio": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+          }
+        },
+        {
+          "type": "audio",
+          "data": {
+            "audio": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA="
+          }
+        },
+        {
+          "type": "event",
+          "data": {
+            "event": "final"
+          }
+        }
+      ],
+      "assertions": {
+        "audioFramesCount": 2,
+        "audioChunkByteLength": 44,
+        "receivedCompletionEvent": true
+      }
+    }
+  ]
+}

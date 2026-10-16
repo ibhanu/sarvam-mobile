@@ -1,0 +1,14 @@
+{
+  "name": "@sarvam/codegen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Unified OpenAPI 3.1 + AsyncAPI 2.6 IR compiler and multi-language SDK generator for Sarvam AI Mobile SDKs",
+  "bin": {
+    "sarvam-gen": "./src/cli.mjs"
+  },
+  "scripts": {
+    "generate": "node ./src/cli.mjs",
+    "check": "node ./src/cli.mjs --check"
+  }
+}

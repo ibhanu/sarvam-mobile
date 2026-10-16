@@ -1,0 +1,36 @@
+id: "rest-sas-blob-upload"
+category: "rest"
+operation: "jobs.uploadToSignedUrl"
+title: "Azure SAS Blob Upload Header Validation"
+description: "Verifies PUT /mock-sas-upload requires mandatory header x-ms-blob-type: BlockBlob and rejects with 400 if missing"
+operationKind: "IDEMPOTENT"
+mockScenario: "sas-blob-upload"
+
+validRequest:
+  method: "PUT"
+  path: "/mock-sas-upload"
+  headers:
+    x-ms-blob-type: "BlockBlob"
+    content-type: "application/octet-stream"
+  body: "mock-audio-binary-data"
+  expectedStatus: 201
+  expectedHeaders:
+    x-ms-request-id: "mock-azure-req-1"
+
+missingHeaderRequest:
+  method: "PUT"
+  path: "/mock-sas-upload"
+  headers:
+    content-type: "application/octet-stream"
+  body: "mock-audio-binary-data"
+  expectedStatus: 400
+  expectedHeaders:
+    content-type: "application/json"
+  expectedBody:
+    error:
+      code: "MissingRequiredHeader"
+      message: "Mandatory header x-ms-blob-type: BlockBlob missing"
+  sdkError:
+    type: "BadRequestError"
+    code: "MissingRequiredHeader"
+    statusCode: 400

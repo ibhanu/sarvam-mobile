@@ -1,0 +1,19 @@
+name: sarvam
+version: 0.1.0
+description: Official Dart and Flutter client SDK for Sarvam AI's Indic language models and speech services.
+homepage: https://sarvam.ai
+repository: https://github.com/sarvamai/sarvam-mobile/tree/main/packages/dart/sarvam
+issue_tracker: https://github.com/sarvamai/sarvam-mobile/issues
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  http: ^1.2.0
+  http_parser: ^4.0.0
+  web_socket_channel: ^3.0.0
+
+dev_dependencies:
+  coverage: ^1.16.0
+  lints: ^4.0.0
+  test: ^1.25.0

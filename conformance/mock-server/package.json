@@ -1,0 +1,31 @@
+{
+  "name": "@sarvam/mock-server",
+  "version": "0.1.0",
+  "description": "Deterministic conformance mock server for Sarvam AI Mobile SDKs",
+  "type": "module",
+  "main": "dist/src/server.js",
+  "types": "dist/src/server.d.ts",
+  "bin": {
+    "sarvam-mock-server": "dist/src/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "bundle-cases": "tsx src/bundle-cases.ts",
+    "pretest": "npm run bundle-cases && npm run build",
+    "test": "node --test dist/test/server.test.js",
+    "start": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "ws": "^8.18.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/ws": "^8.5.14",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

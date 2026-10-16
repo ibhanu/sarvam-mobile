@@ -1,0 +1,43 @@
+id: "rest-idempotent-retry-500"
+category: "rest"
+operation: "chat.listModels"
+title: "IDEMPOTENT GET Operation Retries on HTTP 500"
+description: "Verifies GET /v2/models (IDEMPOTENT) automatically retries upon receiving transient HTTP 500 Internal Server Error and succeeds on attempt 2"
+operationKind: "IDEMPOTENT"
+mockScenario: "server-error-retry"
+
+attempts:
+  - attempt: 1
+    request:
+      method: "GET"
+      path: "/v2/models"
+      headers:
+        api-subscription-key: "test-api-key"
+        x-mock-scenario: "server-error-retry"
+    expectedStatus: 500
+    expectedBody:
+      error:
+        code: "internal_server_error"
+        message: "Transient inference service failure"
+        request_id: "req_glitch_500"
+  - attempt: 2
+    request:
+      method: "GET"
+      path: "/v2/models"
+      headers:
+        api-subscription-key: "test-api-key"
+        x-mock-scenario: "server-error-retry"
+    expectedStatus: 200
+    expectedBody:
+      models:
+        - id: "sarvam-2b"
+        - id: "saaras:v3"
+
+expected:
+  totalAttempts: 2
+  retriesPerformed: 1
+  finalStatus: 200
+  body:
+    models:
+      - id: "sarvam-2b"
+      - id: "saaras:v3"

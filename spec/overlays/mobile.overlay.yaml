@@ -1,0 +1,744 @@
+# OpenAPI Overlay Specification 1.0.0
+# Generated for Sarvam AI Mobile SDKs
+overlay: 1.0.0
+info:
+  title: Sarvam AI Mobile SDK OpenAPI Overlay
+  version: 1.0.0
+  description: "OpenAPI Overlay specifying mobile SDK resource hierarchy, normalized method names, operation kinds, environments, streaming modes, and backend quirks."
+actions:
+  - target: "$.info"
+    update:
+      x-sarvam-mobile-metadata:
+        version: 1.0.0
+        specVersion: "2026-10-16"
+        environments:
+          api: "https://api.sarvam.ai"
+          dubbing: "https://api.sarvam.ai/dubbing"
+          ws: "wss://api.sarvam.ai"
+        statistics:
+          totalOperations: 53
+          totalChannels: 5
+          priorityCounts:
+            P0: 13
+            P1: 18
+            P2: 20
+            SKIP: 7
+          environmentHostCounts:
+            api: 49
+            dubbing: 4
+            ws: 5
+          streamingModeCounts:
+            none: 48
+            bytes: 2
+            sse_chat: 2
+            sse_responses: 1
+            ws_stt: 3
+            ws_tts: 2
+        channels:
+          /speech-to-text-realtime/ws:
+            channel: "/speech-to-text-realtime/ws"
+            resourceGroup: speechToText
+            methodName: connect
+            priority: P0
+            operationKind: null
+            environmentHost: ws
+            streamingMode: ws_stt
+            summary: "Ultra-low latency real-time Speech-to-Text WebSocket connection"
+            quirks:
+              authSubprotocolPrefix: "api-subscription-key."
+              supportedSampleRates:
+                - 16000
+                - 8000
+              clientSampleRateValidation: true
+              audioPayloadEncoding: linear16
+          /text-to-speech/ws:
+            channel: "/text-to-speech/ws"
+            resourceGroup: textToSpeech
+            methodName: connect
+            priority: P0
+            operationKind: null
+            environmentHost: ws
+            streamingMode: ws_tts
+            summary: "Real-time Text-to-Speech synthesis WebSocket connection"
+            quirks:
+              authSubprotocolPrefix: "api-subscription-key."
+              requiresConfigFrameFirst: true
+              completionEventQueryParam: "send_completion_event=true"
+              audioBytesPath: data.audio
+          /voices/clone/ws:
+            channel: "/voices/clone/ws"
+            resourceGroup: voiceCloning
+            methodName: connect
+            priority: P1
+            operationKind: null
+            environmentHost: ws
+            streamingMode: ws_tts
+            summary: "Real-time Instant Voice Cloning WebSocket connection"
+            quirks:
+              authSubprotocolPrefix: "api-subscription-key."
+              requiresConfigFrameFirst: true
+              completionEventQueryParam: "send_completion_event=true"
+              audioBytesPath: data.audio
+              usesVoiceIdInsteadOfSpeaker: true
+          /speech-to-text/ws:
+            channel: "/speech-to-text/ws"
+            resourceGroup: speechToText
+            methodName: connectLegacy
+            priority: SKIP
+            operationKind: null
+            environmentHost: ws
+            streamingMode: ws_stt
+            summary: "Legacy Speech-to-Text WebSocket connection (Deprecated)"
+            quirks:
+              deprecated: true
+              replacement: "/speech-to-text-realtime/ws"
+          /speech-to-text-translate/ws:
+            channel: "/speech-to-text-translate/ws"
+            resourceGroup: speechToText
+            methodName: connectTranslateLegacy
+            priority: SKIP
+            operationKind: null
+            environmentHost: ws
+            streamingMode: ws_stt
+            summary: "Legacy Speech-to-Text Translate WebSocket connection (Deprecated)"
+            quirks:
+              deprecated: true
+              replacement: "/speech-to-text-realtime/ws?mode=translate"
+  - target: "$.paths['/v2/models/{model_id}'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: chatCompletion_get_model_v2
+        resourceGroup: chat
+        methodName: getModel
+        priority: P0
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/v2/models'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: chatCompletion_list_models_v2
+        resourceGroup: chat
+        methodName: listModels
+        priority: P0
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/v1/chat/completions'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: chat_completions
+        resourceGroup: chat
+        methodName: completions
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: sse_chat
+        quirks:
+          streamingVariantMethod: completionsStream
+          sseTerminationSentinel: "[DONE]"
+  - target: "$.paths['/v2/chat/completions'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: chat_completionsV2
+        resourceGroup: chat
+        methodName: completionsV2
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: sse_chat
+        quirks:
+          streamingVariantMethod: completionsV2Stream
+          sseTerminationSentinel: "[DONE]"
+          emptyChoicesOnUsage: true
+          headerSessionAffinity: "x-session-affinity"
+  - target: "$.paths['/doc-ai/v1/job/upload'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_create_upload_url
+        resourceGroup: docAi
+        methodName: createUploadUrl
+        priority: P1
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          requiresPresignedUpload: true
+  - target: "$.paths['/doc-ai/v1/job/digitise'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_digitise
+        resourceGroup: docAi
+        methodName: digitise
+        priority: P1
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartArrayFields:
+            - file
+          allowedOutputFormats:
+            - md
+            - html
+  - target: "$.paths['/doc-ai/v1/job/extract'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_extract
+        resourceGroup: docAi
+        methodName: extract
+        priority: P1
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartArrayFields:
+            - file
+          jsonStringifyFields:
+            - schema
+  - target: "$.paths['/doc-ai/v1/job/{job_id}/download-url'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_get_download_url
+        resourceGroup: docAi
+        methodName: getDownloadUrl
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/doc-ai/v1/job/{job_id}/results'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_get_results
+        resourceGroup: docAi
+        methodName: getResults
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/doc-ai/v1/job/{job_id}/status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: docAi_get_status
+        resourceGroup: docAi
+        methodName: getStatus
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/doc-digitization/job/v1/{job_id}/download-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentIntelligence_get_download_links
+        resourceGroup: documentIntelligence
+        methodName: getDownloadLinks
+        priority: SKIP
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          deprecated: true
+  - target: "$.paths['/doc-digitization/job/v1/{job_id}/status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: documentIntelligence_get_status
+        resourceGroup: documentIntelligence
+        methodName: getStatus
+        priority: SKIP
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          deprecated: true
+  - target: "$.paths['/doc-digitization/job/v1/upload-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentIntelligence_get_upload_links
+        resourceGroup: documentIntelligence
+        methodName: getUploadLinks
+        priority: SKIP
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          deprecated: true
+  - target: "$.paths['/doc-digitization/job/v1'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentIntelligence_initialise
+        resourceGroup: documentIntelligence
+        methodName: initialise
+        priority: SKIP
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          deprecated: true
+          replacement: "/doc-ai/v1/job/digitise"
+  - target: "$.paths['/doc-digitization/job/v1/{job_id}/start'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentIntelligence_start
+        resourceGroup: documentIntelligence
+        methodName: start
+        priority: SKIP
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          deprecated: true
+  - target: "$.paths['/translate/document/jobs'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentTranslation_create
+        resourceGroup: documentTranslation
+        methodName: create
+        priority: P2
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          requiresAzureBlobHeader: true
+  - target: "$.paths['/translate/document/jobs/{job_id}/export/status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: documentTranslation_get_export_status
+        resourceGroup: documentTranslation
+        methodName: getExportStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/translate/document/jobs/{job_id}/live-status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: documentTranslation_get_live_status
+        resourceGroup: documentTranslation
+        methodName: getLiveStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/translate/document/jobs/{job_id}/start'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentTranslation_start
+        resourceGroup: documentTranslation
+        methodName: start
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/translate/document/jobs/{job_id}/export'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: documentTranslation_trigger_export
+        resourceGroup: documentTranslation
+        methodName: triggerExport
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/jobs'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: dubbing_create
+        resourceGroup: dubbing
+        methodName: create
+        priority: P2
+        operationKind: JOB_CREATE
+        environmentHost: dubbing
+        streamingMode: none
+        quirks:
+          requiresAzureBlobHeader: true
+          wireFieldAliases:
+            source_language_code: src_lang
+            target_language_codes: target_langs
+  - target: "$.paths['/jobs/{job_id}/export-status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: dubbing_get_export_status
+        resourceGroup: dubbing
+        methodName: getExportStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: dubbing
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/jobs/{job_id}/live-status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: dubbing_get_live_status
+        resourceGroup: dubbing
+        methodName: getLiveStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: dubbing
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/jobs/{job_id}/start'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: dubbing_start
+        resourceGroup: dubbing
+        methodName: start
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: dubbing
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/text-to-speech/pronunciation-dictionary'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: pronunciationDictionary_create
+        resourceGroup: pronunciationDictionary
+        methodName: create
+        priority: P1
+        operationKind: MULTIPART_COMPUTE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartFileFields:
+            - file
+  - target: "$.paths['/text-to-speech/pronunciation-dictionary'].delete"
+    update:
+      x-sarvam-mobile:
+        operationId: pronunciationDictionary_delete
+        resourceGroup: pronunciationDictionary
+        methodName: delete
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          dictIdQueryParam: dict_id
+  - target: "$.paths['/text-to-speech/pronunciation-dictionary/{dict_id}'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: pronunciationDictionary_get
+        resourceGroup: pronunciationDictionary
+        methodName: get
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/text-to-speech/pronunciation-dictionary'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: pronunciationDictionary_list
+        resourceGroup: pronunciationDictionary
+        methodName: list
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/text-to-speech/pronunciation-dictionary'].put"
+    update:
+      x-sarvam-mobile:
+        operationId: pronunciationDictionary_update
+        resourceGroup: pronunciationDictionary
+        methodName: update
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartFileFields:
+            - file
+          dictIdQueryParam: dict_id
+  - target: "$.paths['/v2/responses'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: responses_create_stream
+        resourceGroup: responses
+        methodName: createStream
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: sse_responses
+        quirks:
+          noDoneSentinel: true
+          nestedReasoningItems: true
+          terminationEvents:
+            - response.completed
+            - response.incomplete
+            - response.failed
+  - target: "$.paths['/speech-to-text/job/v1/download-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextJob_get_download_links
+        resourceGroup: speechToTextJob
+        methodName: getDownloadLinks
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text/job/v1/{job_id}/status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextJob_get_status
+        resourceGroup: speechToTextJob
+        methodName: getStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text/job/v1/upload-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextJob_get_upload_links
+        resourceGroup: speechToTextJob
+        methodName: getUploadLinks
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          requiresAzureBlobHeader: true
+  - target: "$.paths['/speech-to-text/job/v1'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextJob_initialise
+        resourceGroup: speechToTextJob
+        methodName: initialise
+        priority: P2
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text/job/v1/{job_id}/start'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextJob_start
+        resourceGroup: speechToTextJob
+        methodName: start
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text-translate/job/v1/download-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextTranslateJob_get_download_links
+        resourceGroup: speechToTextTranslateJob
+        methodName: getDownloadLinks
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text-translate/job/v1/{job_id}/status'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextTranslateJob_get_status
+        resourceGroup: speechToTextTranslateJob
+        methodName: getStatus
+        priority: P2
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text-translate/job/v1/upload-files'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextTranslateJob_get_upload_links
+        resourceGroup: speechToTextTranslateJob
+        methodName: getUploadLinks
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          requiresAzureBlobHeader: true
+  - target: "$.paths['/speech-to-text-translate/job/v1'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextTranslateJob_initialise
+        resourceGroup: speechToTextTranslateJob
+        methodName: initialise
+        priority: P2
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text-translate/job/v1/{job_id}/start'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToTextTranslateJob_start
+        resourceGroup: speechToTextTranslateJob
+        methodName: start
+        priority: P2
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/speech-to-text'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToText_transcribe
+        resourceGroup: speechToText
+        methodName: transcribe
+        priority: P0
+        operationKind: MULTIPART_COMPUTE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartFileFields:
+            - file
+  - target: "$.paths['/speech-to-text-translate'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: speechToText_translate
+        resourceGroup: speechToText
+        methodName: translate
+        priority: P0
+        operationKind: MULTIPART_COMPUTE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartFileFields:
+            - file
+  - target: "$.paths['/text-to-speech'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: textToSpeech_convert
+        resourceGroup: textToSpeech
+        methodName: convert
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          audioBytesPath: "audios[0].audio"
+  - target: "$.paths['/text-to-speech/stream'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: textToSpeech_convertStream
+        resourceGroup: textToSpeech
+        methodName: stream
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: bytes
+        quirks:
+          responseContentType: "application/octet-stream"
+  - target: "$.paths['/text-lid'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: text_identifyLanguage
+        resourceGroup: text
+        methodName: identifyLanguage
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/translate'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: text_translate
+        resourceGroup: text
+        methodName: translate
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/transliterate'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: text_transliterate
+        resourceGroup: text
+        methodName: transliterate
+        priority: P0
+        operationKind: STATELESS_POST
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/voices/clone'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_convert
+        resourceGroup: voiceCloning
+        methodName: convert
+        priority: P1
+        operationKind: MULTIPART_COMPUTE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          audioBytesPath: audio
+          multipartFileFields:
+            - ref_audio
+  - target: "$.paths['/voices/clone/stream'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_convertStream
+        resourceGroup: voiceCloning
+        methodName: stream
+        priority: P1
+        operationKind: MULTIPART_COMPUTE
+        environmentHost: api
+        streamingMode: bytes
+        quirks:
+          responseContentType: "application/octet-stream"
+          multipartFileFields:
+            - ref_audio
+  - target: "$.paths['/voices/create'].post"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_createVoice
+        resourceGroup: voiceCloning
+        methodName: createVoice
+        priority: P1
+        operationKind: JOB_CREATE
+        environmentHost: api
+        streamingMode: none
+        quirks:
+          multipartFileFields:
+            - file
+  - target: "$.paths['/voices/delete/{voice_id}'].delete"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_deleteVoice
+        resourceGroup: voiceCloning
+        methodName: deleteVoice
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/voices/{voice_id}'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_getVoice
+        resourceGroup: voiceCloning
+        methodName: getVoice
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}
+  - target: "$.paths['/voices'].get"
+    update:
+      x-sarvam-mobile:
+        operationId: voiceCloning_listVoices
+        resourceGroup: voiceCloning
+        methodName: listVoices
+        priority: P1
+        operationKind: IDEMPOTENT
+        environmentHost: api
+        streamingMode: none
+        quirks: {}

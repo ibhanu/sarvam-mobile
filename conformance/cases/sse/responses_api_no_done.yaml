@@ -1,0 +1,68 @@
+id: "sse-responses-api-no-done"
+category: "sse"
+operation: "responses.createStream"
+title: "Responses API SSE Stream (No [DONE] Sentinel Line)"
+description: "Verifies POST /v2/responses emits structured SSE events and cleanly terminates upon receiving event: response.completed without hanging waiting for data: [DONE]"
+operationKind: "STATELESS_POST"
+mockScenario: "responses-sse-no-done"
+
+request:
+  method: "POST"
+  path: "/v2/responses"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "responses-sse-no-done"
+  body:
+    model: "glm-5.3"
+    input: "Explain quantum computing briefly"
+
+expected:
+  status: 200
+  headers:
+    content-type: "text/event-stream"
+  rawSsePayload: |
+    event: response.created
+    data: {"id":"resp_001","type":"response.created"}
+
+    event: response.output_item.added
+    data: {"id":"resp_001","type":"response.output_item.added","item":{"id":"item_001","type":"message","role":"assistant"}}
+
+    event: response.content_part.added
+    data: {"id":"resp_001","type":"response.content_part.added","item_id":"item_001","part":{"type":"text","text":"Quantum computers use qubits."}}
+
+    event: response.completed
+    data: {"id":"resp_001","type":"response.completed","response":{"status":"completed"}}
+
+  events:
+    - event: "response.created"
+      data:
+        id: "resp_001"
+        type: "response.created"
+    - event: "response.output_item.added"
+      data:
+        id: "resp_001"
+        type: "response.output_item.added"
+        item:
+          id: "item_001"
+          type: "message"
+          role: "assistant"
+    - event: "response.content_part.added"
+      data:
+        id: "resp_001"
+        type: "response.content_part.added"
+        item_id: "item_001"
+        part:
+          type: "text"
+          text: "Quantum computers use qubits."
+    - event: "response.completed"
+      data:
+        id: "resp_001"
+        type: "response.completed"
+        response:
+          status: "completed"
+
+  assertions:
+    hasDoneSentinel: false
+    terminatesOnEvent: "response.completed"
+    finalResponseStatus: "completed"

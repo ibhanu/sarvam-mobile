@@ -1,0 +1,279 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect Changed Paths
+    runs-on: ubuntu-latest
+    outputs:
+      codegen: ${{ steps.filter.outputs.codegen }}
+      kotlin: ${{ steps.filter.outputs.kotlin }}
+      swift: ${{ steps.filter.outputs.swift }}
+      ts-react-native: ${{ steps.filter.outputs.ts-react-native }}
+      dart-flutter: ${{ steps.filter.outputs.dart-flutter }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Path Filter Check
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            codegen:
+              - 'spec/**'
+              - 'codegen/**'
+              - '.github/workflows/ci.yml'
+            kotlin:
+              - 'packages/kotlin/**'
+              - 'spec/**'
+              - 'conformance/**'
+              - '.github/workflows/ci.yml'
+            swift:
+              - 'packages/swift/**'
+              - 'Package.swift'
+              - 'spec/**'
+              - 'conformance/**'
+              - '.github/workflows/ci.yml'
+            ts-react-native:
+              - 'packages/ts-core/**'
+              - 'packages/react-native/**'
+              - 'spec/**'
+              - 'conformance/**'
+              - '.github/workflows/ci.yml'
+            dart-flutter:
+              - 'packages/dart/**'
+              - 'spec/**'
+              - 'conformance/**'
+              - '.github/workflows/ci.yml'
+
+  codegen-check:
+    name: Codegen Drift Check
+    needs: changes
+    if: ${{ needs.changes.outputs.codegen == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check Spec & Generator Drift
+        run: |
+          if [ -d "codegen" ] && [ -f "codegen/package.json" ]; then
+            cd codegen
+            npm ci || npm install
+            npm run check || (npm run generate && git diff --exit-code)
+          else
+            echo "No codegen package found, skipping drift check."
+          fi
+
+  kotlin:
+    name: Android & Kotlin Matrix
+    needs: changes
+    if: ${{ needs.changes.outputs.kotlin == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Node.js (for Conformance Mock Server)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start Conformance Mock Server
+        run: |
+          if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
+            cd conformance/mock-server
+            npm ci || npm install
+            npm start &
+            echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
+            cd ../..
+            sleep 2
+          fi
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Kotlin & Android Verification + JaCoCo Coverage
+        run: |
+          cd packages/kotlin
+          if [ -f "./gradlew" ]; then
+            ./gradlew check jacocoTestReport --stacktrace
+          else
+            gradle check jacocoTestReport --stacktrace
+          fi
+
+      - name: Stop Conformance Mock Server
+        if: always()
+        run: |
+          if [ -n "$MOCK_SERVER_PID" ]; then
+            kill "$MOCK_SERVER_PID" 2>/dev/null || true
+          fi
+
+  swift:
+    name: Swift & Apple Platforms
+    needs: changes
+    if: ${{ needs.changes.outputs.swift == 'true' || github.event_name == 'push' }}
+    runs-on: macos-14
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (for Conformance Mock Server)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start Conformance Mock Server
+        run: |
+          if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
+            cd conformance/mock-server
+            npm ci || npm install
+            npm start &
+            echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
+            cd ../..
+            sleep 2
+          fi
+
+      - name: Run Swift Package Tests & Export LCOV Coverage
+        run: |
+          swift test --enable-code-coverage
+          mkdir -p packages/swift/coverage
+          BIN_PATH=$(swift build --show-bin-path)
+          PROFDATA="$BIN_PATH/codecov/default.profdata"
+          TEST_BIN=$(find "$BIN_PATH" -name "*PackageTests.xctest" | head -n 1)/Contents/MacOS/SarvamPackageTests
+          if [ -f "$TEST_BIN" ] && [ -f "$PROFDATA" ]; then
+            xcrun llvm-cov export -format="lcov" "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests" > packages/swift/coverage/lcov.info
+            xcrun llvm-cov report "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests"
+          fi
+
+      - name: Stop Conformance Mock Server
+        if: always()
+        run: |
+          if [ -n "$MOCK_SERVER_PID" ]; then
+            kill "$MOCK_SERVER_PID" 2>/dev/null || true
+          fi
+
+  ts-react-native:
+    name: TypeScript & React Native
+    needs: changes
+    if: ${{ needs.changes.outputs.ts-react-native == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start Conformance Mock Server
+        run: |
+          if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
+            cd conformance/mock-server
+            npm ci || npm install
+            npm start &
+            echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
+            cd ../..
+            sleep 2
+          fi
+
+      - name: Build, Typecheck & Coverage TypeScript Core
+        run: |
+          cd packages/ts-core
+          npm install
+          npm run typecheck
+          npm run build
+          npm run test:coverage
+
+      - name: Build, Typecheck & Coverage React Native SDK
+        run: |
+          cd packages/react-native
+          npm install
+          npm run typecheck
+          npm run build
+          npm run test:coverage
+
+      - name: Stop Conformance Mock Server
+        if: always()
+        run: |
+          if [ -n "$MOCK_SERVER_PID" ]; then
+            kill "$MOCK_SERVER_PID" 2>/dev/null || true
+          fi
+
+  dart-flutter:
+    name: Dart & Flutter
+    needs: changes
+    if: ${{ needs.changes.outputs.dart-flutter == 'true' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (for Conformance Mock Server)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start Conformance Mock Server
+        run: |
+          if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
+            cd conformance/mock-server
+            npm ci || npm install
+            npm start &
+            echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
+            cd ../..
+            sleep 2
+          fi
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+
+      - name: Analyze & Test Core Dart Package with Coverage
+        run: |
+          cd packages/dart/sarvam
+          dart pub get
+          dart analyze --fatal-infos
+          if [ -d "test" ]; then
+            dart run coverage:test_with_coverage
+          fi
+
+      - name: Analyze & Test Companion Flutter Audio Package with Coverage
+        run: |
+          cd packages/dart/sarvam_flutter_audio
+          flutter pub get
+          flutter analyze --fatal-infos
+          if [ -d "test" ]; then
+            flutter test --coverage
+          fi
+
+      - name: Stop Conformance Mock Server
+        if: always()
+        run: |
+          if [ -n "$MOCK_SERVER_PID" ]; then
+            kill "$MOCK_SERVER_PID" 2>/dev/null || true
+          fi

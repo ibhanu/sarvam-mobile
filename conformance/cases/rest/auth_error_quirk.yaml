@@ -1,0 +1,38 @@
+id: "rest-auth-error-quirk"
+category: "rest"
+operation: "text.translate"
+title: "Auth Error Quirk (HTTP 403 with invalid_api_key_error)"
+description: "Verifies HTTP 403 with code invalid_api_key_error maps to AuthenticationError (not PermissionDeniedError) and triggers token refresh when using TokenAuth"
+operationKind: "STATELESS_POST"
+mockScenario: "auth-invalid-api-key"
+
+request:
+  method: "POST"
+  path: "/translate"
+  headers:
+    api-subscription-key: "invalid-key"
+    content-type: "application/json"
+    x-mock-scenario: "auth-invalid-api-key"
+  body:
+    input: "Hello world"
+    source_language_code: "en-IN"
+    target_language_code: "hi-IN"
+
+expected:
+  status: 403
+  headers:
+    content-type: "application/json"
+  body:
+    error:
+      code: "invalid_api_key_error"
+      message: "Invalid API key"
+      request_id: "req_auth_403"
+  sdkError:
+    type: "AuthenticationError"
+    code: "invalid_api_key_error"
+    statusCode: 403
+    requestId: "req_auth_403"
+    message: "Invalid API key"
+    shouldTriggerTokenRefresh: true
+    shouldRetryWithBackoff: false
+    maxRetries: 1

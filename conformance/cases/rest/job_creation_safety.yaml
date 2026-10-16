@@ -1,0 +1,36 @@
+id: "rest-job-creation-safety-500"
+category: "rest"
+operation: "docAi.digitise"
+title: "Job Creation Safety on HTTP 500"
+description: "Verifies docAi.digitise returning HTTP 500 throws ServerError immediately with 0 retries because JOB_CREATE operations must not retry on 500 without Idempotency-Key"
+operationKind: "JOB_CREATE"
+mockScenario: "job-create-500"
+
+request:
+  method: "POST"
+  path: "/doc-ai/v1/job/digitise"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "job-create-500"
+  body:
+    language: "hi"
+    output_format: "md"
+
+expected:
+  status: 500
+  headers:
+    content-type: "application/json"
+  body:
+    error:
+      code: "internal_server_error"
+      message: "Internal server error"
+      request_id: "req_job_500"
+  sdkError:
+    type: "ServerError"
+    code: "internal_server_error"
+    statusCode: 500
+    requestId: "req_job_500"
+    message: "Internal server error"
+    shouldRetry: false
+    maxRetries: 0

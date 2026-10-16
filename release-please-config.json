@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "packages/kotlin": {
+      "release-type": "maven",
+      "package-name": "sarvam-core",
+      "component": "kotlin"
+    },
+    "packages/swift": {
+      "release-type": "simple",
+      "package-name": "Sarvam",
+      "component": "swift"
+    },
+    "packages/ts-core": {
+      "release-type": "node",
+      "package-name": "@sarvam/core",
+      "component": "ts-core"
+    },
+    "packages/react-native": {
+      "release-type": "node",
+      "package-name": "@sarvam/react-native",
+      "component": "react-native"
+    },
+    "packages/dart": {
+      "release-type": "dart",
+      "package-name": "sarvam",
+      "component": "dart"
+    }
+  }
+}

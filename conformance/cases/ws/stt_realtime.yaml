@@ -1,0 +1,44 @@
+id: "ws-stt-realtime"
+category: "ws"
+operation: "speechToText.connect"
+title: "WebSocket STT Realtime Full Turn"
+description: "Verifies WS handshake with Api-Subscription-Key header, client streaming audio_input, and server emitting session_begin, vad_speech_start, transcript_partial, transcript_final, and session_end"
+mockScenario: "stt-realtime"
+
+connection:
+  path: "/speech-to-text-realtime/ws"
+  queryParams:
+    language_code: "hi-IN"
+    model: "saaras:v3-realtime"
+    sample_rate: "16000"
+  headers:
+    Api-Subscription-Key: "test-api-key"
+
+clientFrames:
+  - event: "audio_input"
+    audio: "AAAA"
+  - event: "end"
+
+expectedServerFrames:
+  - event: "session_begin"
+    session_id: "sess_stt_001"
+  - event: "vad_speech_start"
+    timestamp_ms: 100
+  - event: "transcript_partial"
+    utterance_idx: 0
+    text: "नमस्ते"
+    language: "hi-IN"
+  - event: "transcript_final"
+    utterance_idx: 0
+    text: "नमस्ते!"
+    language: "hi-IN"
+    language_confidence: 0.99
+    start_s: 0.1
+    end_s: 1.5
+  - event: "session_end"
+
+assertions:
+  finalTranscript: "नमस्ते!"
+  languageCode: "hi-IN"
+  receivedSessionBegin: true
+  receivedSessionEnd: true

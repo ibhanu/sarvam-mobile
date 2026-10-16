@@ -1,0 +1,48 @@
+id: "rest-rate-limit-retry"
+category: "rest"
+operation: "text.translate"
+title: "Rate Limit 429 Retry with retry-after-ms"
+description: "Verifies HTTP 429 with retry-after-ms: 50 on attempt 1, followed by HTTP 200 on attempt 2 succeeds after 1 retry"
+operationKind: "STATELESS_POST"
+mockScenario: "rate-limit-retry"
+
+request:
+  method: "POST"
+  path: "/translate"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "rate-limit-retry"
+  body:
+    input: "Hello retry"
+    source_language_code: "en-IN"
+    target_language_code: "hi-IN"
+
+attempts:
+  - attempt: 1
+    expectedStatus: 429
+    expectedHeaders:
+      retry-after-ms: "50"
+      content-type: "application/json"
+    expectedBody:
+      error:
+        code: "rate_limit_exceeded_error"
+        message: "Rate limit exceeded"
+        request_id: "req_rl_1"
+    parsedRetryAfterMs: 50
+  - attempt: 2
+    expectedStatus: 200
+    expectedHeaders:
+      content-type: "application/json"
+    expectedBody:
+      translated_text: "नमस्ते पुनः प्रयास"
+
+expected:
+  totalAttempts: 2
+  retriesPerformed: 1
+  finalStatus: 200
+  body:
+    translated_text: "नमस्ते पुनः प्रयास"
+  sdkResponse:
+    type: "TranslateResponse"
+    translatedText: "नमस्ते पुनः प्रयास"

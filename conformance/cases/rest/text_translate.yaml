@@ -1,0 +1,31 @@
+id: "rest-text-translate-success"
+category: "rest"
+operation: "text.translate"
+title: "REST text.translate Success"
+description: "Verifies api-subscription-key header, request JSON body, and response decoding"
+operationKind: "STATELESS_POST"
+mockScenario: "default"
+
+request:
+  method: "POST"
+  path: "/translate"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+  body:
+    input: "Hello world"
+    source_language_code: "en-IN"
+    target_language_code: "hi-IN"
+    speaker_gender: "Male"
+    mode: "formal"
+    model: "mayura:v1"
+
+expected:
+  status: 200
+  headers:
+    content-type: "application/json"
+  body:
+    translated_text: "नमस्ते दुनिया"
+  sdkResponse:
+    type: "TranslateResponse"
+    translatedText: "नमस्ते दुनिया"

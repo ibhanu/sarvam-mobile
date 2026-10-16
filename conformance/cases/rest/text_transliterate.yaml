@@ -1,0 +1,28 @@
+id: "rest-text-transliterate-success"
+category: "rest"
+operation: "text.transliterate"
+title: "REST text.transliterate Success"
+description: "Verifies api-subscription-key header, request JSON body, and transliterated response decoding"
+operationKind: "STATELESS_POST"
+mockScenario: "default"
+
+request:
+  method: "POST"
+  path: "/transliterate"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+  body:
+    input: "namaste"
+    source_language_code: "en-IN"
+    target_language_code: "hi-IN"
+
+expected:
+  status: 200
+  headers:
+    content-type: "application/json"
+  body:
+    transliterated_text: "नमस्ते"
+  sdkResponse:
+    type: "TransliterateResponse"
+    transliteratedText: "नमस्ते"

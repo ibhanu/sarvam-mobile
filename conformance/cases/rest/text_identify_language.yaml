@@ -1,0 +1,28 @@
+id: "rest-text-identify-language-success"
+category: "rest"
+operation: "text.identifyLanguage"
+title: "REST text.identifyLanguage Success"
+description: "Verifies api-subscription-key header, request JSON body, and language detection decoding"
+operationKind: "STATELESS_POST"
+mockScenario: "default"
+
+request:
+  method: "POST"
+  path: "/text-lid"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+  body:
+    input: "नमस्ते दुनिया"
+
+expected:
+  status: 200
+  headers:
+    content-type: "application/json"
+  body:
+    detected_language: "hi-IN"
+    confidence: 0.99
+  sdkResponse:
+    type: "TextLidResponse"
+    detectedLanguage: "hi-IN"
+    confidence: 0.99

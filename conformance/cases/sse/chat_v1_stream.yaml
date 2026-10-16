@@ -1,0 +1,54 @@
+id: "sse-chat-v1-stream"
+category: "sse"
+operation: "chat.completionsStream"
+title: "Chat V1 Standard SSE Streaming"
+description: "Verifies standard OpenAI-compatible POST /v1/chat/completions with stream: true streaming delta tokens and terminating on data: [DONE]"
+operationKind: "STATELESS_POST"
+mockScenario: "chat-v1-stream"
+
+request:
+  method: "POST"
+  path: "/v1/chat/completions"
+  headers:
+    Authorization: "Bearer test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "chat-v1-stream"
+  body:
+    model: "sarvam-2b"
+    stream: true
+    messages:
+      - role: "user"
+        content: "Hi"
+
+expected:
+  status: 200
+  headers:
+    content-type: "text/event-stream"
+  rawSsePayload: |
+    data: {"id":"chatcmpl-v1-1","choices":[{"index":0,"delta":{"content":"Hi"}}]}
+
+    data: {"id":"chatcmpl-v1-1","choices":[{"index":0,"delta":{"content":" there!"}}]}
+
+    data: [DONE]
+
+  chunks:
+    - type: "data"
+      parsed:
+        id: "chatcmpl-v1-1"
+        choices:
+          - index: 0
+            delta:
+              content: "Hi"
+    - type: "data"
+      parsed:
+        id: "chatcmpl-v1-1"
+        choices:
+          - index: 0
+            delta:
+              content: " there!"
+    - type: "done"
+      raw: "[DONE]"
+
+  assertions:
+    accumulatedContent: "Hi there!"
+    terminatedOnDone: true

@@ -1,0 +1,853 @@
+{
+  "generator": "sarvam-gen/0.1.0",
+  "specVersion": "2026-10-16",
+  "openApiVersion": "3.1.0",
+  "asyncApiVersion": "2.6.0",
+  "environments": {
+    "api": "https://api.sarvam.ai",
+    "dubbing": "https://api.sarvam.ai/dubbing",
+    "ws": "wss://api.sarvam.ai"
+  },
+  "enums": {
+    "LanguageCode": [
+      "auto",
+      "unknown",
+      "en-IN",
+      "hi-IN",
+      "bn-IN",
+      "kn-IN",
+      "ml-IN",
+      "mr-IN",
+      "or-IN",
+      "pa-IN",
+      "ta-IN",
+      "te-IN",
+      "gu-IN",
+      "as-IN",
+      "ur-IN",
+      "ne-IN",
+      "kok-IN",
+      "ks-IN",
+      "sd-IN",
+      "sa-IN",
+      "sat-IN",
+      "mni-IN",
+      "brx-IN",
+      "mai-IN",
+      "doi-IN"
+    ],
+    "TtsModel": [
+      "bulbul:v4-flash",
+      "bulbul:v3",
+      "bulbul:v2"
+    ],
+    "SttModel": [
+      "saaras:v4",
+      "saaras:v3-realtime",
+      "saaras:v3",
+      "saaras:v2.5"
+    ],
+    "ChatModel": [
+      "sarvam-105b",
+      "sarvam-m",
+      "gemma4",
+      "glm5.3",
+      "deepseek-v4.1-flash"
+    ],
+    "AudioCodec": [
+      "mp3",
+      "wav",
+      "linear16",
+      "linear32",
+      "mulaw",
+      "alaw",
+      "opus",
+      "flac",
+      "aac"
+    ],
+    "SttMode": [
+      "transcribe",
+      "translate",
+      "verbatim",
+      "translit",
+      "codemix"
+    ],
+    "Speaker": [
+      "anushka",
+      "abhilash",
+      "manisha",
+      "vidya",
+      "arya",
+      "karun",
+      "hitesh",
+      "aditya",
+      "ritu",
+      "priya",
+      "neha",
+      "rahul",
+      "pooja",
+      "rohan",
+      "simran",
+      "kavya"
+    ]
+  },
+  "operations": [
+    {
+      "operationId": "text_translate",
+      "resourceGroup": "text",
+      "methodName": "translate",
+      "httpMethod": "POST",
+      "path": "/translate",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Text Translation across 11 Indic languages and English",
+      "quirks": {}
+    },
+    {
+      "operationId": "text_transliterate",
+      "resourceGroup": "text",
+      "methodName": "transliterate",
+      "httpMethod": "POST",
+      "path": "/transliterate",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Transliterate text between Latin (English) and Indic scripts",
+      "quirks": {}
+    },
+    {
+      "operationId": "text_identifyLanguage",
+      "resourceGroup": "text",
+      "methodName": "identifyLanguage",
+      "httpMethod": "POST",
+      "path": "/text-lid",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Identify spoken/written language of text",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToText_transcribe",
+      "resourceGroup": "speechToText",
+      "methodName": "transcribe",
+      "httpMethod": "POST",
+      "path": "/speech-to-text",
+      "priority": "P0",
+      "operationKind": "MULTIPART_COMPUTE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Batch audio transcription to Indic text",
+      "quirks": {
+        "multipartFileFields": [
+          "file"
+        ]
+      }
+    },
+    {
+      "operationId": "speechToText_translate",
+      "resourceGroup": "speechToText",
+      "methodName": "translate",
+      "httpMethod": "POST",
+      "path": "/speech-to-text-translate",
+      "priority": "P0",
+      "operationKind": "MULTIPART_COMPUTE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Speech to text translation directly to English",
+      "quirks": {
+        "multipartFileFields": [
+          "file"
+        ]
+      }
+    },
+    {
+      "operationId": "textToSpeech_convert",
+      "resourceGroup": "textToSpeech",
+      "methodName": "convert",
+      "httpMethod": "POST",
+      "path": "/text-to-speech",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Convert text to speech audio (base64 in audios[0].audio)",
+      "quirks": {
+        "audioBytesPath": "audios[0].audio"
+      }
+    },
+    {
+      "operationId": "textToSpeech_convertStream",
+      "resourceGroup": "textToSpeech",
+      "methodName": "stream",
+      "httpMethod": "POST",
+      "path": "/text-to-speech/stream",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "bytes",
+      "summary": "Convert text to raw binary chunked audio stream",
+      "quirks": {
+        "responseContentType": "application/octet-stream"
+      }
+    },
+    {
+      "operationId": "chat_completions",
+      "resourceGroup": "chat",
+      "methodName": "completions",
+      "httpMethod": "POST",
+      "path": "/v1/chat/completions",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "sse_chat",
+      "summary": "OpenAI-compatible Chat Completion V1 (Sync / SSE)",
+      "quirks": {
+        "streamingVariantMethod": "completionsStream",
+        "sseTerminationSentinel": "[DONE]"
+      }
+    },
+    {
+      "operationId": "chat_completionsV2",
+      "resourceGroup": "chat",
+      "methodName": "completionsV2",
+      "httpMethod": "POST",
+      "path": "/v2/chat/completions",
+      "priority": "P0",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "sse_chat",
+      "summary": "Sarvam Chat Completion V2 with session affinity and prompt caching",
+      "quirks": {
+        "streamingVariantMethod": "completionsV2Stream",
+        "sseTerminationSentinel": "[DONE]",
+        "emptyChoicesOnUsage": true,
+        "headerSessionAffinity": "x-session-affinity"
+      }
+    },
+    {
+      "operationId": "chatCompletion_list_models_v2",
+      "resourceGroup": "chat",
+      "methodName": "listModels",
+      "httpMethod": "GET",
+      "path": "/v2/models",
+      "priority": "P0",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "List available chat models V2",
+      "quirks": {}
+    },
+    {
+      "operationId": "chatCompletion_get_model_v2",
+      "resourceGroup": "chat",
+      "methodName": "getModel",
+      "httpMethod": "GET",
+      "path": "/v2/models/{model_id}",
+      "priority": "P0",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get details of specific chat model V2",
+      "quirks": {}
+    },
+    {
+      "operationId": "responses_create_stream",
+      "resourceGroup": "responses",
+      "methodName": "createStream",
+      "httpMethod": "POST",
+      "path": "/v2/responses",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "sse_responses",
+      "summary": "Streaming response from reasoning models with item trees",
+      "quirks": {
+        "noDoneSentinel": true,
+        "nestedReasoningItems": true,
+        "terminationEvents": [
+          "response.completed",
+          "response.incomplete",
+          "response.failed"
+        ]
+      }
+    },
+    {
+      "operationId": "voiceCloning_listVoices",
+      "resourceGroup": "voiceCloning",
+      "methodName": "listVoices",
+      "httpMethod": "GET",
+      "path": "/voices",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "List cloned voice profiles",
+      "quirks": {}
+    },
+    {
+      "operationId": "voiceCloning_createVoice",
+      "resourceGroup": "voiceCloning",
+      "methodName": "createVoice",
+      "httpMethod": "POST",
+      "path": "/voices/create",
+      "priority": "P1",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Create new cloned voice profile from sample audio",
+      "quirks": {
+        "multipartFileFields": [
+          "file"
+        ]
+      }
+    },
+    {
+      "operationId": "voiceCloning_getVoice",
+      "resourceGroup": "voiceCloning",
+      "methodName": "getVoice",
+      "httpMethod": "GET",
+      "path": "/voices/{voice_id}",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get details of cloned voice profile",
+      "quirks": {}
+    },
+    {
+      "operationId": "voiceCloning_deleteVoice",
+      "resourceGroup": "voiceCloning",
+      "methodName": "deleteVoice",
+      "httpMethod": "DELETE",
+      "path": "/voices/delete/{voice_id}",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Delete cloned voice profile",
+      "quirks": {}
+    },
+    {
+      "operationId": "voiceCloning_convert",
+      "resourceGroup": "voiceCloning",
+      "methodName": "convert",
+      "httpMethod": "POST",
+      "path": "/voices/clone",
+      "priority": "P1",
+      "operationKind": "MULTIPART_COMPUTE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Generate speech audio using cloned voice (base64 in response.audio)",
+      "quirks": {
+        "audioBytesPath": "audio",
+        "multipartFileFields": [
+          "ref_audio"
+        ]
+      }
+    },
+    {
+      "operationId": "voiceCloning_convertStream",
+      "resourceGroup": "voiceCloning",
+      "methodName": "stream",
+      "httpMethod": "POST",
+      "path": "/voices/clone/stream",
+      "priority": "P1",
+      "operationKind": "MULTIPART_COMPUTE",
+      "environmentHost": "api",
+      "streamingMode": "bytes",
+      "summary": "Stream cloned speech as binary chunked audio",
+      "quirks": {
+        "responseContentType": "application/octet-stream",
+        "multipartFileFields": [
+          "ref_audio"
+        ]
+      }
+    },
+    {
+      "operationId": "pronunciationDictionary_list",
+      "resourceGroup": "pronunciationDictionary",
+      "methodName": "list",
+      "httpMethod": "GET",
+      "path": "/text-to-speech/pronunciation-dictionary",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "List pronunciation dictionaries",
+      "quirks": {}
+    },
+    {
+      "operationId": "pronunciationDictionary_create",
+      "resourceGroup": "pronunciationDictionary",
+      "methodName": "create",
+      "httpMethod": "POST",
+      "path": "/text-to-speech/pronunciation-dictionary",
+      "priority": "P1",
+      "operationKind": "MULTIPART_COMPUTE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Create pronunciation dictionary from JSON file",
+      "quirks": {
+        "multipartFileFields": [
+          "file"
+        ]
+      }
+    },
+    {
+      "operationId": "pronunciationDictionary_update",
+      "resourceGroup": "pronunciationDictionary",
+      "methodName": "update",
+      "httpMethod": "PUT",
+      "path": "/text-to-speech/pronunciation-dictionary",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Update pronunciation dictionary by dict_id",
+      "quirks": {
+        "multipartFileFields": [
+          "file"
+        ],
+        "dictIdQueryParam": "dict_id"
+      }
+    },
+    {
+      "operationId": "pronunciationDictionary_get",
+      "resourceGroup": "pronunciationDictionary",
+      "methodName": "get",
+      "httpMethod": "GET",
+      "path": "/text-to-speech/pronunciation-dictionary/{dict_id}",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get pronunciation dictionary by id",
+      "quirks": {}
+    },
+    {
+      "operationId": "pronunciationDictionary_delete",
+      "resourceGroup": "pronunciationDictionary",
+      "methodName": "delete",
+      "httpMethod": "DELETE",
+      "path": "/text-to-speech/pronunciation-dictionary",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Delete pronunciation dictionary by dict_id",
+      "quirks": {
+        "dictIdQueryParam": "dict_id"
+      }
+    },
+    {
+      "operationId": "docAi_digitise",
+      "resourceGroup": "docAi",
+      "methodName": "digitise",
+      "httpMethod": "POST",
+      "path": "/doc-ai/v1/job/digitise",
+      "priority": "P1",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Digitise document images/PDFs with Indic OCR",
+      "quirks": {
+        "multipartArrayFields": [
+          "file"
+        ],
+        "allowedOutputFormats": [
+          "md",
+          "html"
+        ]
+      }
+    },
+    {
+      "operationId": "docAi_extract",
+      "resourceGroup": "docAi",
+      "methodName": "extract",
+      "httpMethod": "POST",
+      "path": "/doc-ai/v1/job/extract",
+      "priority": "P1",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Extract structured schema entities from document",
+      "quirks": {
+        "multipartArrayFields": [
+          "file"
+        ],
+        "jsonStringifyFields": [
+          "schema"
+        ]
+      }
+    },
+    {
+      "operationId": "docAi_create_upload_url",
+      "resourceGroup": "docAi",
+      "methodName": "createUploadUrl",
+      "httpMethod": "POST",
+      "path": "/doc-ai/v1/job/upload",
+      "priority": "P1",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Create presigned upload URL for large document uploads",
+      "quirks": {
+        "requiresPresignedUpload": true
+      }
+    },
+    {
+      "operationId": "docAi_get_status",
+      "resourceGroup": "docAi",
+      "methodName": "getStatus",
+      "httpMethod": "GET",
+      "path": "/doc-ai/v1/job/{job_id}/status",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get Document AI processing status",
+      "quirks": {}
+    },
+    {
+      "operationId": "docAi_get_results",
+      "resourceGroup": "docAi",
+      "methodName": "getResults",
+      "httpMethod": "GET",
+      "path": "/doc-ai/v1/job/{job_id}/results",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get Document AI digitised/extracted JSON results",
+      "quirks": {}
+    },
+    {
+      "operationId": "docAi_get_download_url",
+      "resourceGroup": "docAi",
+      "methodName": "getDownloadUrl",
+      "httpMethod": "GET",
+      "path": "/doc-ai/v1/job/{job_id}/download-url",
+      "priority": "P1",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get download link for formatted export file",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextJob_initialise",
+      "resourceGroup": "speechToTextJob",
+      "methodName": "initialise",
+      "httpMethod": "POST",
+      "path": "/speech-to-text/job/v1",
+      "priority": "P2",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Initiate long-form Speech-to-Text bulk batch job",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextJob_get_upload_links",
+      "resourceGroup": "speechToTextJob",
+      "methodName": "getUploadLinks",
+      "httpMethod": "POST",
+      "path": "/speech-to-text/job/v1/upload-files",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get signed Azure Blob upload URLs for audio files",
+      "quirks": {
+        "requiresAzureBlobHeader": true
+      }
+    },
+    {
+      "operationId": "speechToTextJob_start",
+      "resourceGroup": "speechToTextJob",
+      "methodName": "start",
+      "httpMethod": "POST",
+      "path": "/speech-to-text/job/v1/{job_id}/start",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Start Speech-to-Text bulk job processing",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextJob_get_status",
+      "resourceGroup": "speechToTextJob",
+      "methodName": "getStatus",
+      "httpMethod": "GET",
+      "path": "/speech-to-text/job/v1/{job_id}/status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get Speech-to-Text bulk job status and file progress",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextJob_get_download_links",
+      "resourceGroup": "speechToTextJob",
+      "methodName": "getDownloadLinks",
+      "httpMethod": "POST",
+      "path": "/speech-to-text/job/v1/download-files",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get signed download URLs for completed transcripts",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextTranslateJob_initialise",
+      "resourceGroup": "speechToTextTranslateJob",
+      "methodName": "initialise",
+      "httpMethod": "POST",
+      "path": "/speech-to-text-translate/job/v1",
+      "priority": "P2",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Initiate long-form STT Translation bulk batch job",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextTranslateJob_get_upload_links",
+      "resourceGroup": "speechToTextTranslateJob",
+      "methodName": "getUploadLinks",
+      "httpMethod": "POST",
+      "path": "/speech-to-text-translate/job/v1/upload-files",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get signed Azure Blob upload URLs for audio files",
+      "quirks": {
+        "requiresAzureBlobHeader": true
+      }
+    },
+    {
+      "operationId": "speechToTextTranslateJob_start",
+      "resourceGroup": "speechToTextTranslateJob",
+      "methodName": "start",
+      "httpMethod": "POST",
+      "path": "/speech-to-text-translate/job/v1/{job_id}/start",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Start STT Translation bulk job processing",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextTranslateJob_get_status",
+      "resourceGroup": "speechToTextTranslateJob",
+      "methodName": "getStatus",
+      "httpMethod": "GET",
+      "path": "/speech-to-text-translate/job/v1/{job_id}/status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get STT Translation bulk job status",
+      "quirks": {}
+    },
+    {
+      "operationId": "speechToTextTranslateJob_get_download_links",
+      "resourceGroup": "speechToTextTranslateJob",
+      "methodName": "getDownloadLinks",
+      "httpMethod": "POST",
+      "path": "/speech-to-text-translate/job/v1/download-files",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get signed download URLs for translated transcripts",
+      "quirks": {}
+    },
+    {
+      "operationId": "documentTranslation_create",
+      "resourceGroup": "documentTranslation",
+      "methodName": "create",
+      "httpMethod": "POST",
+      "path": "/translate/document/jobs",
+      "priority": "P2",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Create multi-page document translation job",
+      "quirks": {
+        "requiresAzureBlobHeader": true
+      }
+    },
+    {
+      "operationId": "documentTranslation_start",
+      "resourceGroup": "documentTranslation",
+      "methodName": "start",
+      "httpMethod": "POST",
+      "path": "/translate/document/jobs/{job_id}/start",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Start document translation job after file upload",
+      "quirks": {}
+    },
+    {
+      "operationId": "documentTranslation_get_live_status",
+      "resourceGroup": "documentTranslation",
+      "methodName": "getLiveStatus",
+      "httpMethod": "GET",
+      "path": "/translate/document/jobs/{job_id}/live-status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get real-time document translation progress",
+      "quirks": {}
+    },
+    {
+      "operationId": "documentTranslation_trigger_export",
+      "resourceGroup": "documentTranslation",
+      "methodName": "triggerExport",
+      "httpMethod": "POST",
+      "path": "/translate/document/jobs/{job_id}/export",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Trigger export of translated document in specified format",
+      "quirks": {}
+    },
+    {
+      "operationId": "documentTranslation_get_export_status",
+      "resourceGroup": "documentTranslation",
+      "methodName": "getExportStatus",
+      "httpMethod": "GET",
+      "path": "/translate/document/jobs/{job_id}/export/status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "api",
+      "streamingMode": "none",
+      "summary": "Get status and signed download URL of exported document",
+      "quirks": {}
+    },
+    {
+      "operationId": "dubbing_create",
+      "resourceGroup": "dubbing",
+      "methodName": "create",
+      "httpMethod": "POST",
+      "path": "/jobs",
+      "priority": "P2",
+      "operationKind": "JOB_CREATE",
+      "environmentHost": "dubbing",
+      "streamingMode": "none",
+      "summary": "Create video/audio dubbing job",
+      "quirks": {
+        "requiresAzureBlobHeader": true,
+        "wireFieldAliases": {
+          "source_language_code": "src_lang",
+          "target_language_codes": "target_langs"
+        }
+      }
+    },
+    {
+      "operationId": "dubbing_start",
+      "resourceGroup": "dubbing",
+      "methodName": "start",
+      "httpMethod": "POST",
+      "path": "/jobs/{job_id}/start",
+      "priority": "P2",
+      "operationKind": "STATELESS_POST",
+      "environmentHost": "dubbing",
+      "streamingMode": "none",
+      "summary": "Start dubbing pipeline after video upload",
+      "quirks": {}
+    },
+    {
+      "operationId": "dubbing_get_live_status",
+      "resourceGroup": "dubbing",
+      "methodName": "getLiveStatus",
+      "httpMethod": "GET",
+      "path": "/jobs/{job_id}/live-status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "dubbing",
+      "streamingMode": "none",
+      "summary": "Get real-time dubbing pipeline stage status",
+      "quirks": {}
+    },
+    {
+      "operationId": "dubbing_get_export_status",
+      "resourceGroup": "dubbing",
+      "methodName": "getExportStatus",
+      "httpMethod": "GET",
+      "path": "/jobs/{job_id}/export-status",
+      "priority": "P2",
+      "operationKind": "IDEMPOTENT",
+      "environmentHost": "dubbing",
+      "streamingMode": "none",
+      "summary": "Get signed URLs for dubbed media exports",
+      "quirks": {}
+    }
+  ],
+  "channels": [
+    {
+      "path": "/speech-to-text-realtime/ws",
+      "resourceGroup": "speechToText",
+      "methodName": "connect",
+      "priority": "P0",
+      "streamingMode": "ws_stt",
+      "environmentHost": "ws",
+      "summary": "Ultra-low latency real-time Speech-to-Text WebSocket connection",
+      "quirks": {
+        "authSubprotocolPrefix": "api-subscription-key.",
+        "supportedSampleRates": [
+          16000,
+          8000
+        ],
+        "clientSampleRateValidation": true,
+        "audioPayloadEncoding": "linear16"
+      }
+    },
+    {
+      "path": "/text-to-speech/ws",
+      "resourceGroup": "textToSpeech",
+      "methodName": "connect",
+      "priority": "P0",
+      "streamingMode": "ws_tts",
+      "environmentHost": "ws",
+      "summary": "Real-time Text-to-Speech synthesis WebSocket connection",
+      "quirks": {
+        "authSubprotocolPrefix": "api-subscription-key.",
+        "requiresConfigFrameFirst": true,
+        "completionEventQueryParam": "send_completion_event=true",
+        "audioBytesPath": "data.audio"
+      }
+    },
+    {
+      "path": "/voices/clone/ws",
+      "resourceGroup": "voiceCloning",
+      "methodName": "connect",
+      "priority": "P1",
+      "streamingMode": "ws_tts",
+      "environmentHost": "ws",
+      "summary": "Real-time Instant Voice Cloning WebSocket connection",
+      "quirks": {
+        "authSubprotocolPrefix": "api-subscription-key.",
+        "requiresConfigFrameFirst": true,
+        "completionEventQueryParam": "send_completion_event=true",
+        "audioBytesPath": "data.audio",
+        "usesVoiceIdInsteadOfSpeaker": true
+      }
+    }
+  ]
+}

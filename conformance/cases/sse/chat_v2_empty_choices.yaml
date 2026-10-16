@@ -1,0 +1,69 @@
+id: "sse-chat-v2-empty-choices"
+category: "sse"
+operation: "chat.completionsV2Stream"
+title: "Chat V2 SSE Stream with Empty Choices Usage Chunk"
+description: "Verifies POST /v2/chat/completions with stream: true handles 2 content deltas, 1 usage chunk with choices: [] without throwing index out-of-bounds error, and terminates cleanly on data: [DONE]"
+operationKind: "STATELESS_POST"
+mockScenario: "chat-v2-sse-empty-choices"
+
+request:
+  method: "POST"
+  path: "/v2/chat/completions"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "chat-v2-sse-empty-choices"
+  body:
+    model: "sarvam-2b"
+    stream: true
+    messages:
+      - role: "user"
+        content: "Hello"
+
+expected:
+  status: 200
+  headers:
+    content-type: "text/event-stream"
+  rawSsePayload: |
+    data: {"id":"chatcmpl-1","choices":[{"index":0,"delta":{"content":"Namaste"}}]}
+
+    data: {"id":"chatcmpl-1","choices":[{"index":0,"delta":{"content":" world"}}]}
+
+    data: {"id":"chatcmpl-1","choices":[],"usage":{"prompt_tokens":8,"completion_tokens":2,"total_tokens":10}}
+
+    data: [DONE]
+
+  chunks:
+    - type: "data"
+      parsed:
+        id: "chatcmpl-1"
+        choices:
+          - index: 0
+            delta:
+              content: "Namaste"
+    - type: "data"
+      parsed:
+        id: "chatcmpl-1"
+        choices:
+          - index: 0
+            delta:
+              content: " world"
+    - type: "data"
+      parsed:
+        id: "chatcmpl-1"
+        choices: []
+        usage:
+          prompt_tokens: 8
+          completion_tokens: 2
+          total_tokens: 10
+    - type: "done"
+      raw: "[DONE]"
+
+  assertions:
+    accumulatedContent: "Namaste world"
+    finalUsage:
+      prompt_tokens: 8
+      completion_tokens: 2
+      total_tokens: 10
+    noChoicesCrashOnUsage: true
+    terminatedOnDone: true

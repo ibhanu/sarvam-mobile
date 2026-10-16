@@ -1,0 +1,44 @@
+{
+  "name": "@sarvam/bff-proxy",
+  "version": "0.1.0",
+  "description": "Reference Backend-For-Frontend (BFF) & Ephemeral Token Proxy for Sarvam AI Mobile SDKs",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./worker": {
+      "types": "./dist/src/worker.d.ts",
+      "default": "./dist/src/worker.js"
+    },
+    "./node": {
+      "types": "./dist/src/node-server.d.ts",
+      "default": "./dist/src/node-server.js"
+    }
+  },
+  "bin": {
+    "sarvam-proxy": "dist/src/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "pretest": "npm run build",
+    "test": "node --test dist/test/proxy.test.js",
+    "test:coverage": "npm run build && mkdir -p coverage && node --import tsx --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info test/*.test.ts",
+    "start": "node dist/src/cli.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/ws": "^8.5.14",
+    "tsx": "^4.23.15",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

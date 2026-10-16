@@ -1,0 +1,62 @@
+{
+  "name": "@sarvam/react-native",
+  "version": "0.1.0",
+  "description": "Official React Native SDK for Sarvam AI Indic language models and speech services",
+  "author": "Sarvam AI <dev@sarvam.ai>",
+  "license": "MIT",
+  "homepage": "https://sarvam.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sarvamai/sarvam-mobile.git",
+    "directory": "packages/react-native"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
+  "react-native": "./src/index.ts",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test test/**/*.test.ts",
+    "test:coverage": "npm run build && mkdir -p coverage && node --import tsx --test --experimental-test-coverage --test-coverage-exclude=\"**/node_modules/**\" --test-coverage-exclude=\"**/conformance/**\" --test-coverage-exclude=\"**/ts-core/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info test/*.test.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@sarvam/core": "file:../ts-core"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "react": "^18.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.7.3"
+  }
+}

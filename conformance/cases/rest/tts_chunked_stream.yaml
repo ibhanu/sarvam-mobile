@@ -1,0 +1,38 @@
+id: "rest-tts-chunked-stream"
+category: "rest"
+operation: "textToSpeech.stream"
+title: "TTS HTTP Chunked Binary Audio Stream"
+description: "Verifies POST /text-to-speech/stream returning chunked binary audio stream yields 3 chunks concatenating into expected byte length and content"
+operationKind: "STATELESS_POST"
+mockScenario: "tts-chunked-stream"
+
+request:
+  method: "POST"
+  path: "/text-to-speech/stream"
+  headers:
+    api-subscription-key: "test-api-key"
+    content-type: "application/json"
+    x-mock-scenario: "tts-chunked-stream"
+  body:
+    text: "नमस्ते भारत"
+    target_language_code: "hi-IN"
+    speaker: "meera"
+
+expected:
+  status: 200
+  headers:
+    content-type: "application/octet-stream"
+    transfer-encoding: "chunked"
+  chunks:
+    - index: 0
+      byteLength: 16
+      hex: "0102030405060708090a0b0c0d0e0f10"
+    - index: 1
+      byteLength: 16
+      hex: "1112131415161718191a1b1c1d1e1f20"
+    - index: 2
+      byteLength: 16
+      hex: "2122232425262728292a2b2c2d2e2f30"
+  totalChunks: 3
+  totalByteLength: 48
+  concatenatedHex: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30"

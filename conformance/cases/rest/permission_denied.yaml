@@ -1,0 +1,38 @@
+id: "rest-permission-denied"
+category: "rest"
+operation: "text.translate"
+title: "Permission Denied (HTTP 403 with authentication_error)"
+description: "Verifies HTTP 403 with non-invalid_api_key_error code maps to PermissionDeniedError with no token refresh and no retry"
+operationKind: "STATELESS_POST"
+mockScenario: "auth-permission-denied"
+
+request:
+  method: "POST"
+  path: "/translate"
+  headers:
+    api-subscription-key: "tier-locked-key"
+    content-type: "application/json"
+    x-mock-scenario: "auth-permission-denied"
+  body:
+    input: "Hello world"
+    source_language_code: "en-IN"
+    target_language_code: "hi-IN"
+
+expected:
+  status: 403
+  headers:
+    content-type: "application/json"
+  body:
+    error:
+      code: "authentication_error"
+      message: "Tier locked"
+      request_id: "req_perm_403"
+  sdkError:
+    type: "PermissionDeniedError"
+    code: "authentication_error"
+    statusCode: 403
+    requestId: "req_perm_403"
+    message: "Tier locked"
+    shouldTriggerTokenRefresh: false
+    shouldRetryWithBackoff: false
+    maxRetries: 0
