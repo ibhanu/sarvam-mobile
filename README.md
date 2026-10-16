@@ -1,6 +1,6 @@
 # Sarvam AI Mobile SDKs
 
-[![CI](https://github.com/sarvamai/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/sarvamai/sarvam-mobile/actions/workflows/ci.yml)
+[![CI](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
 
