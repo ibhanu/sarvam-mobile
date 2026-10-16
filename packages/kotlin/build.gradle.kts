@@ -12,3 +12,16 @@ allprojects {
     group = (findProperty("GROUP") as? String) ?: "ai.sarvam"
     version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
 }
+
+subprojects {
+    plugins.withType<MavenPublishPlugin> {
+        configure<PublishingExtension> {
+            repositories {
+                maven {
+                    name = "staging"
+                    url = uri(rootProject.layout.buildDirectory.dir("staging-repo"))
+                }
+            }
+        }
+    }
+}

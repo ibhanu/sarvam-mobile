@@ -21,10 +21,15 @@
       "package-name": "@sarvam/react-native",
       "component": "react-native"
     },
-    "packages/dart": {
+    "packages/dart/sarvam": {
       "release-type": "dart",
       "package-name": "sarvam",
       "component": "dart"
+    },
+    "packages/dart/sarvam_flutter_audio": {
+      "release-type": "dart",
+      "package-name": "sarvam_flutter_audio",
+      "component": "dart-audio"
     }
   }
 }

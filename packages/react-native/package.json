@@ -7,8 +7,11 @@
   "homepage": "https://sarvam.ai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sarvamai/sarvam-mobile.git",
+    "url": "git+https://github.com/sarvamai/sarvam-mobile.git",
     "directory": "packages/react-native"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "sideEffects": false,
   "type": "module",
@@ -39,7 +42,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sarvam/core": "file:../ts-core"
+    "@sarvam/core": "^0.1.0"
   },
   "peerDependencies": {
     "react": "*",

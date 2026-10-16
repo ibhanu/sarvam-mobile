@@ -1,0 +1,220 @@
+name: Release & Publish Packages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate build and packaging without publishing)'
+        required: true
+        type: boolean
+        default: true
+      target:
+        description: 'Target registry to publish'
+        required: true
+        type: choice
+        default: 'all'
+        options:
+          - all
+          - npm
+          - maven
+          - dart
+          - swift
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+  packages: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release Please (Automated Versioning & Changelogs)
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      ts_core_created: ${{ steps.release.outputs['packages/ts-core--release_created'] }}
+      ts_core_version: ${{ steps.release.outputs['packages/ts-core--version'] }}
+      ts_core_tag: ${{ steps.release.outputs['packages/ts-core--tag_name'] }}
+      react_native_created: ${{ steps.release.outputs['packages/react-native--release_created'] }}
+      react_native_version: ${{ steps.release.outputs['packages/react-native--version'] }}
+      react_native_tag: ${{ steps.release.outputs['packages/react-native--tag_name'] }}
+      kotlin_created: ${{ steps.release.outputs['packages/kotlin--release_created'] }}
+      kotlin_version: ${{ steps.release.outputs['packages/kotlin--version'] }}
+      kotlin_tag: ${{ steps.release.outputs['packages/kotlin--tag_name'] }}
+      dart_created: ${{ steps.release.outputs['packages/dart/sarvam--release_created'] }}
+      dart_version: ${{ steps.release.outputs['packages/dart/sarvam--version'] }}
+      dart_tag: ${{ steps.release.outputs['packages/dart/sarvam--tag_name'] }}
+      dart_audio_created: ${{ steps.release.outputs['packages/dart/sarvam_flutter_audio--release_created'] }}
+      dart_audio_version: ${{ steps.release.outputs['packages/dart/sarvam_flutter_audio--version'] }}
+      swift_created: ${{ steps.release.outputs['packages/swift--release_created'] }}
+      swift_version: ${{ steps.release.outputs['packages/swift--version'] }}
+      swift_tag: ${{ steps.release.outputs['packages/swift--tag_name'] }}
+    steps:
+      - name: Run Google Release Please Action
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish-npm:
+    name: Publish npm Packages (@sarvam/core & @sarvam/react-native)
+    needs: release-please
+    if: |
+      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm') ||
+      needs.release-please.outputs.ts_core_created == 'true' ||
+      needs.release-please.outputs.react_native_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22 with npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies & Build all TypeScript / RN SDKs
+        run: |
+          npm install
+          npm run build
+
+      - name: Dry-run Publish npm Packages
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          echo "Executing npm dry-run publish for @sarvam/core..."
+          cd packages/ts-core && npm publish --dry-run
+          echo "Executing npm dry-run publish for @sarvam/react-native..."
+          cd ../react-native && npm publish --dry-run
+
+      - name: Live Publish npm Packages
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Publishing @sarvam/core to npm..."
+          cd packages/ts-core && npm publish --access public --provenance
+          echo "Publishing @sarvam/react-native to npm..."
+          cd ../react-native && npm publish --access public --provenance
+
+  publish-dart:
+    name: Publish Dart & Flutter Packages (pub.dev)
+    needs: release-please
+    if: |
+      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart') ||
+      needs.release-please.outputs.dart_created == 'true' ||
+      needs.release-please.outputs.dart_audio_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: 'stable'
+
+      - name: Dry-run Publish Dart Core Package (sarvam)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          cd packages/dart/sarvam
+          dart pub get
+          dart pub publish --dry-run
+
+      - name: Dry-run Publish Flutter Companion Audio Package (sarvam_flutter_audio)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          cd packages/dart/sarvam_flutter_audio
+          flutter pub get
+          flutter pub publish --dry-run
+
+      - name: Live Publish Dart Core Package (sarvam)
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        run: |
+          cd packages/dart/sarvam
+          dart pub get
+          dart pub publish --force
+
+      - name: Live Publish Flutter Companion Audio Package (sarvam_flutter_audio)
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        run: |
+          cd packages/dart/sarvam_flutter_audio
+          flutter pub get
+          flutter pub publish --force
+
+  publish-maven:
+    name: Publish Kotlin & Android Artifacts (Maven Central)
+    needs: release-please
+    if: |
+      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven') ||
+      needs.release-please.outputs.kotlin_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build & Publish to Staging / Local Repository
+        run: |
+          cd packages/kotlin
+          ./gradlew publishToMavenLocal publishAllPublicationsToStagingRepository --stacktrace
+
+      - name: Upload Maven Staging Artifacts Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-central-staging-bundle
+          path: packages/kotlin/build/staging-repo/
+
+      - name: Live Publish to Maven Central / Sonatype
+        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && env.OSSRH_USERNAME != '' }}
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          cd packages/kotlin
+          ./gradlew publish --stacktrace
+
+  publish-swift:
+    name: Validate & Index Swift Package (SPM / SPI)
+    needs: release-please
+    if: |
+      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift') ||
+      needs.release-please.outputs.swift_created == 'true'
+    runs-on: macos-14
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build and Test Swift Package
+        run: |
+          swift build -c release
+          swift test
+
+      - name: Validate Swift Package Index Manifest
+        run: |
+          if [ -f ".spi.yml" ]; then
+            echo ".spi.yml found and verified."
+          else
+            echo "ERROR: .spi.yml missing!"
+            exit 1
+          fi

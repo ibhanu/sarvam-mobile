@@ -9,6 +9,45 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            groupId = project.group.toString()
+            artifactId = "sarvam-core"
+            version = project.version.toString()
+
+            pom {
+                name.set("sarvam-core")
+                description.set("Official Kotlin/Android Core SDK for Sarvam AI Indic language models and speech services")
+                url.set("https://github.com/sarvamai/sarvam-mobile")
+                inceptionYear.set("2026")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("sarvam")
+                        name.set("Sarvam AI")
+                        email.set("dev@sarvam.ai")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/sarvamai/sarvam-mobile.git")
+                    developerConnection.set("scm:git:ssh://github.com:sarvamai/sarvam-mobile.git")
+                    url.set("https://github.com/sarvamai/sarvam-mobile")
+                }
+            }
+        }
+    }
 }
 
 kotlin {

@@ -1,0 +1,14 @@
+{
+  "name": "sarvam-mobile-monorepo",
+  "private": true,
+  "description": "Sarvam AI Mobile SDKs Monorepo",
+  "workspaces": [
+    "packages/ts-core",
+    "packages/react-native"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=packages/ts-core && npm run build --workspace=packages/react-native",
+    "test": "npm run test --workspace=packages/ts-core && npm run test --workspace=packages/react-native",
+    "publish:dry-run": "npm publish --dry-run --workspace=packages/ts-core && npm publish --dry-run --workspace=packages/react-native"
+  }
+}

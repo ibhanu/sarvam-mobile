@@ -256,7 +256,7 @@ print("Results ready at: \(download.downloadUrl)")
 
 ## Complete Example App
 
-Explore a full SwiftUI voice assistant demonstrating live Indic captions, audio level visualizers, and instant barge-in under [`Examples/iOSApp`](file:///Users/bhanu/Development/sarvam-mobile/packages/swift/Examples/iOSApp).
+Explore a full SwiftUI voice assistant demonstrating live Indic captions, audio level visualizers, and instant barge-in under [`Examples/iOSApp`](Examples/iOSApp).
 
 ---
 
