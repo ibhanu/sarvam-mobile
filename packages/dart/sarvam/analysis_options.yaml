@@ -16,3 +16,4 @@ linter:
     - avoid_print
     - unawaited_futures
     - always_declare_return_types
+    - use_super_parameters

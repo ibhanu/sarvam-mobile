@@ -201,12 +201,11 @@ class SpeechToTextJobResource extends BaseSpeechToTextJobResource {
   SpeechToTextJobResource(
     HttpHandler pipeline,
     SarvamEnvironment environment, {
-    JobPoller? jobPoller,
+    super.jobPoller,
   }) : super(
           pipeline,
           environment,
           '/speech-to-text/job/v1',
-          jobPoller: jobPoller,
         );
 }
 
@@ -215,11 +214,10 @@ class SpeechToTextTranslateJobResource extends BaseSpeechToTextJobResource {
   SpeechToTextTranslateJobResource(
     HttpHandler pipeline,
     SarvamEnvironment environment, {
-    JobPoller? jobPoller,
+    super.jobPoller,
   }) : super(
           pipeline,
           environment,
           '/speech-to-text-translate/job/v1',
-          jobPoller: jobPoller,
         );
 }
