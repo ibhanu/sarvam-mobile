@@ -5,6 +5,18 @@ All notable changes to `@sarvam/core` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0](https://github.com/ibhanu/sarvam-mobile/compare/ts-core-v0.2.0...ts-core-v0.3.0) (2026-10-16)
+
+
+### Features
+
+* **npm:** publish @sarvam-mobile/core and @sarvam-mobile/react-native to npm registry ([3ebbf79](https://github.com/ibhanu/sarvam-mobile/commit/3ebbf795afe218f8bc8ec729d16d87080c412a47))
+
+
+### Bug Fixes
+
+* update repository and issue tracker URLs to ibhanu/sarvam-mobile and bump dart SDKs to 0.2.1 ([a2c1ab1](https://github.com/ibhanu/sarvam-mobile/commit/a2c1ab1f354719724e02c629f34a3a4f1efb7646))
+
 ## [0.2.0](https://github.com/ibhanu/sarvam-mobile/compare/ts-core-v0.1.0...ts-core-v0.2.0) (2026-10-16)
 
 
