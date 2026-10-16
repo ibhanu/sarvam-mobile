@@ -3,7 +3,7 @@ import {
   HttpRequest,
   HttpResponse,
   FetchHttpTransport,
-} from '@sarvam/core';
+} from '@sarvam-mobile/core';
 
 export class ReactNativeFetchTransport implements HttpTransport {
   private readonly underlyingTransport: FetchHttpTransport;

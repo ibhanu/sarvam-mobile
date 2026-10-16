@@ -1,4 +1,4 @@
-import { SarvamClient, SarvamClientConfig } from '@sarvam/core';
+import { SarvamClient, SarvamClientConfig } from '@sarvam-mobile/core';
 import { ReactNativeFetchTransport } from './adapters/fetch-transport.js';
 import { ReactNativeWebSocketFactory } from './adapters/websocket.js';
 

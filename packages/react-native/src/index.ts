@@ -3,7 +3,7 @@
  * Official React Native SDK for Sarvam AI Indic language models and speech services.
  */
 
-export * from '@sarvam/core';
+export * from '@sarvam-mobile/core';
 
 export * from './adapters/websocket.js';
 export * from './adapters/form-data.js';

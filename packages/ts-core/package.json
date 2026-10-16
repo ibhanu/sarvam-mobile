@@ -1,5 +1,5 @@
 {
-  "name": "@sarvam/core",
+  "name": "@sarvam-mobile/core",
   "version": "0.2.0",
   "description": "Official TypeScript Core SDK for Sarvam AI Indic language models and speech services",
   "author": "Sarvam AI <dev@sarvam.ai>",

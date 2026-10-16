@@ -1,4 +1,4 @@
-import { FileInput } from '@sarvam/core';
+import { FileInput } from '@sarvam-mobile/core';
 
 /**
  * Creates a FileInput descriptor object from a local React Native file URI.

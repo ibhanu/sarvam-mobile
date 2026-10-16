@@ -1,8 +1,8 @@
-# @sarvam/react-native
+# @sarvam-mobile/react-native
 
 Official React Native & Expo SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and real-time conversational agents.
 
-[![npm version](https://img.shields.io/npm/v/@sarvam/react-native.svg)](https://www.npmjs.com/package/@sarvam/react-native)
+[![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Hermes Ready](https://img.shields.io/badge/Hermes-100%25%20Compatible-brightgreen.svg)](https://reactnative.dev/docs/hermes)
 [![Expo Ready](https://img.shields.io/badge/Expo-SDK%2050%2B-black.svg)](https://expo.dev/)
@@ -15,18 +15,18 @@ Official React Native & Expo SDK for **Sarvam AI** Indic language models, speech
 
 ### 1. Installation
 
-Install `@sarvam/react-native` and core peer dependency:
+Install `@sarvam-mobile/react-native` and core peer dependency:
 
 ```bash
 # In Expo projects:
-npx expo install @sarvam/react-native @sarvam/core
+npx expo install @sarvam-mobile/react-native @sarvam-mobile/core
 
 # In React Native CLI projects:
-npm install @sarvam/react-native @sarvam/core
+npm install @sarvam-mobile/react-native @sarvam-mobile/core
 # or
-pnpm add @sarvam/react-native @sarvam/core
+pnpm add @sarvam-mobile/react-native @sarvam-mobile/core
 # or
-yarn add @sarvam/react-native @sarvam/core
+yarn add @sarvam-mobile/react-native @sarvam-mobile/core
 ```
 
 ### 2. First Call (< 60 Seconds)
@@ -34,7 +34,7 @@ yarn add @sarvam/react-native @sarvam/core
 Initialize `SarvamReactNativeClient` and perform text translation across Indic languages:
 
 ```typescript
-import { SarvamReactNativeClient, LanguageCode } from '@sarvam/react-native';
+import { SarvamReactNativeClient, LanguageCode } from '@sarvam-mobile/react-native';
 
 const client = new SarvamReactNativeClient({
   apiKey: 'YOUR_DEVELOPMENT_API_KEY', // For production, see TokenAuth below!
@@ -60,7 +60,7 @@ run();
 
 Many existing AI SDKs are designed for Node.js servers and immediately crash in React Native because they depend on Node built-ins (`buffer`, `crypto`, `stream`, `events`, `http`, `net`, and the third-party `ws` package).
 
-`@sarvam/react-native` was built from the ground up for modern React Native:
+`@sarvam-mobile/react-native` was built from the ground up for modern React Native:
 
 1. **Zero Node `Buffer` Reliance**:
    - All binary audio manipulation, Base64 conversion, PCM downsampling, and RMS calculation run entirely on standard JavaScript typed arrays (`Uint8Array`, `Float32Array`, `Int16Array`, `DataView`).
@@ -92,7 +92,7 @@ Generate short-lived ephemeral tokens from your backend server. The mobile SDK a
 - Automatic invalidation and retry if an HTTP 401 or 403 occurs.
 
 ```typescript
-import { SarvamReactNativeClient, TokenAuth } from '@sarvam/react-native';
+import { SarvamReactNativeClient, TokenAuth } from '@sarvam-mobile/react-native';
 
 const authProvider = new TokenAuth(async () => {
   // Fetch an ephemeral token from your existing backend API:
@@ -115,7 +115,7 @@ export const sarvam = new SarvamReactNativeClient({ authProvider });
 If you route requests through a Backend-For-Frontend (BFF) or API Gateway:
 
 ```typescript
-import { SarvamReactNativeClient, ProxyAuth } from '@sarvam/react-native';
+import { SarvamReactNativeClient, ProxyAuth } from '@sarvam-mobile/react-native';
 
 const authProvider = new ProxyAuth('https://api.yourcompany.com/sarvam-gateway', async () => ({
   'X-Mobile-Session': userSessionToken,
@@ -131,10 +131,10 @@ export const sarvam = new SarvamReactNativeClient({ authProvider });
 
 Standard browser code expects `File` or `Blob` objects for multipart uploads. In React Native, audio files recorded to disk exist as native file URIs (`file:///data/user/0/.../audio.wav` on Android or `file:///var/mobile/.../audio.m4a` on iOS).
 
-`@sarvam/react-native` provides `fromReactNativeUri` and `ReactNativeFormDataAdapter`:
+`@sarvam-mobile/react-native` provides `fromReactNativeUri` and `ReactNativeFormDataAdapter`:
 
 ```typescript
-import { SarvamReactNativeClient, fromReactNativeUri, SttModel, LanguageCode } from '@sarvam/react-native';
+import { SarvamReactNativeClient, fromReactNativeUri, SttModel, LanguageCode } from '@sarvam-mobile/react-native';
 
 // 1. Point directly to a native file URI produced by expo-av, react-native-fs, etc.
 const audioFile = fromReactNativeUri('file:///path/to/recorded_audio.wav');
@@ -165,7 +165,7 @@ import {
   SttModel,
   LanguageCode,
   SttRealtimeEvent,
-} from '@sarvam/react-native';
+} from '@sarvam-mobile/react-native';
 
 const client = new SarvamReactNativeClient({ authProvider });
 
@@ -210,7 +210,7 @@ Generate ultra-low-latency synthesized speech in 11+ Indic languages using `bulb
 
 ### 1. HTTP Binary Stream
 ```typescript
-import { Speaker, LanguageCode } from '@sarvam/react-native';
+import { Speaker, LanguageCode } from '@sarvam-mobile/react-native';
 
 const audioStream = await client.textToSpeech.stream({
   text: 'नमस्ते, आप कैसे हैं?',
@@ -257,13 +257,13 @@ Building a voice agent on mobile requires solving two critical audio engineering
 1. **Resampling**: Mobile hardware captures audio at 48kHz or 44.1kHz, while Sarvam's speech models require strict 16kHz mono linear16 PCM.
 2. **Barge-In (Interruption)**: When the bot is speaking and the user begins talking, the bot must stop speaking immediately.
 
-`@sarvam/react-native` provides built-in utilities for both:
+`@sarvam-mobile/react-native` provides built-in utilities for both:
 
 ### 1. Pure TypeScript `PcmResampler`
 Downsamples 48kHz/44.1kHz mono or stereo Float32/Int16 microphone data to 16kHz mono linear16 in pure JavaScript/Hermes:
 
 ```typescript
-import { PcmResampler } from '@sarvam/react-native';
+import { PcmResampler } from '@sarvam-mobile/react-native';
 
 const resampler = new PcmResampler({
   sourceSampleRate: 48000,
@@ -285,7 +285,7 @@ import {
   SarvamReactNativeClient,
   SarvamAudioPlayer,
   BargeInCoordinator,
-} from '@sarvam/react-native';
+} from '@sarvam-mobile/react-native';
 
 const player = new SarvamAudioPlayer({ driver: myAudioDriver });
 const session = await client.speechToText.connect({ ... });
@@ -306,10 +306,10 @@ coordinator.start();
 
 ## Audio Driver Interface
 
-`@sarvam/react-native` provides a clean driver interface (`ReactNativeAudioDriver`) compatible with popular audio libraries such as `react-native-audio-api`, `expo-audio`, or custom TurboModules:
+`@sarvam-mobile/react-native` provides a clean driver interface (`ReactNativeAudioDriver`) compatible with popular audio libraries such as `react-native-audio-api`, `expo-audio`, or custom TurboModules:
 
 ```typescript
-import { ReactNativeAudioDriver } from '@sarvam/react-native';
+import { ReactNativeAudioDriver } from '@sarvam-mobile/react-native';
 
 export class MyCustomAudioDriver implements ReactNativeAudioDriver {
   startRecording(onAudioData: (chunk: Float32Array) => void): void {
@@ -349,7 +349,7 @@ import {
   RateLimitError,
   ServerError,
   RealtimeError,
-} from '@sarvam/react-native';
+} from '@sarvam-mobile/react-native';
 
 try {
   await client.text.translate({ ... });

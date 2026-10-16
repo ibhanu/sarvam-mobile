@@ -64,7 +64,7 @@ jobs:
           manifest-file: .release-please-manifest.json
 
   publish-npm:
-    name: Publish npm Packages (@sarvam/core & @sarvam/react-native)
+    name: Publish npm Packages (@sarvam-mobile/core & @sarvam-mobile/react-native)
     needs: release-please
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm') ||
@@ -89,9 +89,9 @@ jobs:
       - name: Dry-run Publish npm Packages
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: |
-          echo "Executing npm dry-run publish for @sarvam/core..."
+          echo "Executing npm dry-run publish for @sarvam-mobile/core..."
           cd packages/ts-core && npm publish --dry-run
-          echo "Executing npm dry-run publish for @sarvam/react-native..."
+          echo "Executing npm dry-run publish for @sarvam-mobile/react-native..."
           cd ../react-native && npm publish --dry-run
 
       - name: Live Publish npm Packages
@@ -99,9 +99,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "Publishing @sarvam/core to npm..."
+          echo "Publishing @sarvam-mobile/core to npm..."
           cd packages/ts-core && npm publish --access public --provenance
-          echo "Publishing @sarvam/react-native to npm..."
+          echo "Publishing @sarvam-mobile/react-native to npm..."
           cd ../react-native && npm publish --access public --provenance
 
   publish-dart:

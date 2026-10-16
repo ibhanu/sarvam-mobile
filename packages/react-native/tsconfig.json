@@ -20,7 +20,7 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "paths": {
-      "@sarvam/core": ["../ts-core/dist/esm/index.d.ts"]
+      "@sarvam-mobile/core": ["../ts-core/dist/esm/index.d.ts"]
     }
   },
   "include": ["src/**/*"],

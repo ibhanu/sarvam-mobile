@@ -1,5 +1,5 @@
 {
-  "name": "@sarvam/react-native",
+  "name": "@sarvam-mobile/react-native",
   "version": "0.2.0",
   "description": "Official React Native SDK for Sarvam AI Indic language models and speech services",
   "author": "Sarvam AI <dev@sarvam.ai>",
@@ -42,7 +42,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sarvam/core": "^0.2.0"
+    "@sarvam-mobile/core": "^0.2.0"
   },
   "peerDependencies": {
     "react": "*",

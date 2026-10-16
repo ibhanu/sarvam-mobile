@@ -1,4 +1,4 @@
-import { TtsStreamingSession } from '@sarvam/core';
+import { TtsStreamingSession } from '@sarvam-mobile/core';
 import { ReactNativeAudioDriver, AudioPlayerDriver } from './driver.js';
 
 export interface SarvamAudioPlayerConfig {

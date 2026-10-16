@@ -1,4 +1,4 @@
-import { FileInput } from '@sarvam/core';
+import { FileInput } from '@sarvam-mobile/core';
 
 export interface ReactNativeFileObject {
   uri: string;

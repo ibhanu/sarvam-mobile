@@ -33,15 +33,15 @@ flowchart TD
     subgraph CompanionAudio["Hardware Audio Layer (Optional Companion Packages)"]
         AudioKotlin["ai.sarvam:sarvam-android-audio<br/>(AudioRecord, 16kHz PCM, AudioTrack)"]
         AudioSwift["SarvamAudio<br/>(AVAudioEngine, 16kHz PCM, AudioQueue)"]
-        AudioRN["@sarvam/react-native-audio<br/>(Nitro Modules, C++ JSI)"]
+        AudioRN["@sarvam-mobile/react-native-audio<br/>(Nitro Modules, C++ JSI)"]
         AudioFlutter["sarvam_flutter_audio<br/>(Record, AudioPlayers)"]
     end
 
     subgraph CoreLayer["Core Networking SDKs (Zero Hardware Dependencies)"]
         CoreKotlin["ai.sarvam:sarvam-core"]
         CoreSwift["Sarvam (SwiftPM)"]
-        CoreRN["@sarvam/react-native"]
-        CoreTS["@sarvam/core (Zero Deps)"]
+        CoreRN["@sarvam-mobile/react-native"]
+        CoreTS["@sarvam-mobile/core (Zero Deps)"]
         CoreDart["sarvam (Dart/Flutter)"]
     end
 
@@ -87,8 +87,8 @@ flowchart TD
 | **Android / Kotlin** | `ai.sarvam:sarvam-android-audio` | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
 | **iOS / Swift** | `Sarvam` | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package (Swift 6 concurrency, URLSession, SSE) |
 | **iOS / Swift** | `SarvamAudio` | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
-| **TypeScript / Web** | `@sarvam/core` | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK (Fetch, WS, AsyncIterable) |
-| **React Native** | `@sarvam/react-native` | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization |
+| **TypeScript / Web** | `@sarvam-mobile/core` | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK (Fetch, WS, AsyncIterable) |
+| **React Native** | `@sarvam-mobile/react-native` | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization |
 | **Flutter / Dart** | `sarvam` | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client (Sound Null Safety, Streams, http) |
 | **Flutter / Dart** | `sarvam_flutter_audio` | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
 
@@ -177,10 +177,10 @@ print(result.translatedText)
 
 ### 3. React Native (TypeScript)
 ```bash
-npm install @sarvam/react-native @sarvam/core
+npm install @sarvam-mobile/react-native @sarvam-mobile/core
 ```
 ```typescript
-import { SarvamClient, TokenAuth } from '@sarvam/react-native';
+import { SarvamClient, TokenAuth } from '@sarvam-mobile/react-native';
 
 const client = new SarvamClient({
   authProvider: new TokenAuth(async () => {

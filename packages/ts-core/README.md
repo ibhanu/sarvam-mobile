@@ -1,8 +1,8 @@
-# @sarvam/core
+# @sarvam-mobile/core
 
 Official TypeScript Core SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and document intelligence services.
 
-[![npm version](https://img.shields.io/npm/v/@sarvam/core.svg)](https://www.npmjs.com/package/@sarvam/core)
+[![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](tsconfig.json)
@@ -17,13 +17,13 @@ Runs out of the box in Node.js 18+, browsers, Bun, Deno, Edge runtimes, Cloudfla
 ### 1. Installation
 
 ```bash
-npm install @sarvam/core
+npm install @sarvam-mobile/core
 # or
-pnpm add @sarvam/core
+pnpm add @sarvam-mobile/core
 # or
-yarn add @sarvam/core
+yarn add @sarvam-mobile/core
 # or
-bun add @sarvam/core
+bun add @sarvam-mobile/core
 ```
 
 ### 2. Quickstart
@@ -31,7 +31,7 @@ bun add @sarvam/core
 Translate text between English and 11+ Indic languages in less than 5 lines of code:
 
 ```typescript
-import { SarvamClient, LanguageCode } from '@sarvam/core';
+import { SarvamClient, LanguageCode } from '@sarvam-mobile/core';
 
 const client = new SarvamClient({
   apiKey: process.env.SARVAM_API_KEY!,
@@ -51,13 +51,13 @@ console.log(response.translated_text);
 
 ## Authentication & Mobile Security
 
-`@sarvam/core` provides three pluggable authentication mechanisms conforming to modern client and mobile security standards:
+`@sarvam-mobile/core` provides three pluggable authentication mechanisms conforming to modern client and mobile security standards:
 
 ### 1. `ApiKeyAuth` (Server / CLI / Local Prototyping)
 Static API key passed via the `api-subscription-key` header:
 
 ```typescript
-import { SarvamClient, ApiKeyAuth } from '@sarvam/core';
+import { SarvamClient, ApiKeyAuth } from '@sarvam-mobile/core';
 
 // Convenience constructor shortcut:
 const client = new SarvamClient({ apiKey: 'YOUR_API_KEY' });
@@ -75,7 +75,7 @@ const client = new SarvamClient({
 Short-lived ephemeral JWTs or bearer tokens fetched from your backend server. Includes **in-memory caching**, **single-flight deduplication** to eliminate stampedes, and **proactive refresh 60 seconds before expiration**:
 
 ```typescript
-import { SarvamClient, TokenAuth } from '@sarvam/core';
+import { SarvamClient, TokenAuth } from '@sarvam-mobile/core';
 
 const authProvider = new TokenAuth(async () => {
   const res = await fetch('https://api.yourbackend.com/auth/sarvam-token');
@@ -95,7 +95,7 @@ If an HTTP 401 or 403 (`invalid_api_key_error`) occurs mid-session, `TokenAuth` 
 Routes all client traffic through your application's proxy server, appending custom session or CSRF headers without exposing Sarvam endpoints directly:
 
 ```typescript
-import { SarvamClient, ProxyAuth } from '@sarvam/core';
+import { SarvamClient, ProxyAuth } from '@sarvam-mobile/core';
 
 const authProvider = new ProxyAuth('https://api.yourbackend.com/sarvam-proxy', async () => ({
   'X-User-Session': 'session-token-xyz',
@@ -112,7 +112,7 @@ const client = new SarvamClient({ authProvider });
 
 #### Translation across 11+ Indic Languages
 ```typescript
-import { SarvamClient, LanguageCode } from '@sarvam/core';
+import { SarvamClient, LanguageCode } from '@sarvam-mobile/core';
 
 const client = new SarvamClient({ apiKey: process.env.SARVAM_API_KEY });
 
@@ -156,7 +156,7 @@ console.log(result.confidence);        // 0.99
 #### Batch Audio Transcription
 Transcribe pre-recorded audio files (`Uint8Array`, `Blob`, or React Native file descriptors):
 ```typescript
-import { SarvamClient, SttModel, LanguageCode } from '@sarvam/core';
+import { SarvamClient, SttModel, LanguageCode } from '@sarvam-mobile/core';
 
 // Pass Uint8Array binary bytes directly (browser, Node, or mobile):
 const audioBytes = new Uint8Array([...]);
@@ -185,7 +185,7 @@ console.log('English translation:', response.transcript);
 #### Realtime STT Streaming via WebSocket
 Stream 16kHz mono linear16 audio chunks over a low-latency bidirectional WebSocket:
 ```typescript
-import { SarvamClient, SttModel, LanguageCode } from '@sarvam/core';
+import { SarvamClient, SttModel, LanguageCode } from '@sarvam-mobile/core';
 
 const client = new SarvamClient({ apiKey: process.env.SARVAM_API_KEY });
 
@@ -235,7 +235,7 @@ session.end();
 #### REST Speech Synthesis
 Convert Indic text to audio bytes (`bulbul:v4-flash` / `bulbul:v3`):
 ```typescript
-import { SarvamClient, Speaker, LanguageCode } from '@sarvam/core';
+import { SarvamClient, Speaker, LanguageCode } from '@sarvam-mobile/core';
 
 const response = await client.textToSpeech.convert({
   text: 'नमस्ते, आपका स्वागत है।',
@@ -295,7 +295,7 @@ session.flush();
 OpenAI-compatible chat completions interface powered by Indic-specialized foundation models:
 
 ```typescript
-import { SarvamClient, ChatModel } from '@sarvam/core';
+import { SarvamClient, ChatModel } from '@sarvam-mobile/core';
 
 const client = new SarvamClient({ apiKey: process.env.SARVAM_API_KEY });
 
@@ -332,7 +332,7 @@ for await (const chunk of stream) {
 
 ### 5. Document AI, Voice Cloning & Long-Running Jobs
 
-`@sarvam/core` includes first-class support for P1/P2 asynchronous batch workloads:
+`@sarvam-mobile/core` includes first-class support for P1/P2 asynchronous batch workloads:
 
 - **`client.docAi`**: Digitize and structured entity extraction from multilingual documents (`digitiseAndWait`, `extractAndWait`).
 - **`client.voiceCloning`**: Clone custom speaker profiles and convert voice samples.
@@ -356,7 +356,7 @@ import {
   ServerError,
   TimeoutError,
   RealtimeError,
-} from '@sarvam/core';
+} from '@sarvam-mobile/core';
 
 try {
   await client.text.translate({ ... });
@@ -380,7 +380,7 @@ try {
 Customize timeouts, retries, logging, and transports:
 
 ```typescript
-import { SarvamClient, FetchHttpTransport } from '@sarvam/core';
+import { SarvamClient, FetchHttpTransport } from '@sarvam-mobile/core';
 
 const client = new SarvamClient({
   apiKey: process.env.SARVAM_API_KEY,

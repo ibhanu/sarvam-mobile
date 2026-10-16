@@ -16,21 +16,21 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# 1. npm packages (@sarvam/core & @sarvam/react-native)
+# 1. npm packages (@sarvam-mobile/core & @sarvam-mobile/react-native)
 echo -e "\n${YELLOW}=== [1/4] TypeScript & React Native Packages (npm) ===${NC}"
 cd "$ROOT_DIR"
 npm install
 npm run build
 
 if [ "$MODE" = "--live" ] || [ "$MODE" = "--publish" ]; then
-    echo -e "${GREEN}Publishing @sarvam/core to npm registry...${NC}"
+    echo -e "${GREEN}Publishing @sarvam-mobile/core to npm registry...${NC}"
     (cd "$ROOT_DIR/packages/ts-core" && npm publish --access public)
-    echo -e "${GREEN}Publishing @sarvam/react-native to npm registry...${NC}"
+    echo -e "${GREEN}Publishing @sarvam-mobile/react-native to npm registry...${NC}"
     (cd "$ROOT_DIR/packages/react-native" && npm publish --access public)
 else
-    echo "Running npm publish dry-run for @sarvam/core..."
+    echo "Running npm publish dry-run for @sarvam-mobile/core..."
     (cd "$ROOT_DIR/packages/ts-core" && npm publish --dry-run)
-    echo "Running npm publish dry-run for @sarvam/react-native..."
+    echo "Running npm publish dry-run for @sarvam-mobile/react-native..."
     (cd "$ROOT_DIR/packages/react-native" && npm publish --dry-run)
 fi
 

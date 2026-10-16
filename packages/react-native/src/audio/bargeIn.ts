@@ -1,4 +1,4 @@
-import { SttRealtimeSession, SttRealtimeEvent } from '@sarvam/core';
+import { SttRealtimeSession, SttRealtimeEvent } from '@sarvam-mobile/core';
 import { SarvamAudioPlayer } from './player.js';
 
 export interface BargeInCoordinatorConfig {

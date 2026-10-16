@@ -1,4 +1,4 @@
-import { SttRealtimeSession } from '@sarvam/core';
+import { SttRealtimeSession } from '@sarvam-mobile/core';
 import { PcmResampler } from './resampler.js';
 import { ReactNativeAudioDriver, AudioRecorderDriver } from './driver.js';
 

@@ -3,7 +3,7 @@ import {
   WebSocketConnection,
   WebSocketOptions,
   DefaultWebSocketFactory,
-} from '@sarvam/core';
+} from '@sarvam-mobile/core';
 
 /**
  * Detects whether the current environment is React Native native (iOS/Android)

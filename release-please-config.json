@@ -13,12 +13,12 @@
     },
     "packages/ts-core": {
       "release-type": "node",
-      "package-name": "@sarvam/core",
+      "package-name": "@sarvam-mobile/core",
       "component": "ts-core"
     },
     "packages/react-native": {
       "release-type": "node",
-      "package-name": "@sarvam/react-native",
+      "package-name": "@sarvam-mobile/react-native",
       "component": "react-native"
     },
     "packages/dart/sarvam": {
