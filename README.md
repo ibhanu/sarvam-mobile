@@ -1,15 +1,5 @@
 # Sarvam AI Mobile SDKs
 
-## About
-
-**sarvam-mobile** is an open-source Flutter implementation designed to bring **Sarvam AI** capabilities to mobile devices (iOS & Android). It provides a smooth, production-ready foundation for building low-latency conversational AI agents, real-time speech transcription (STT), and natural text-to-speech (TTS) across 11+ Indian languages.
-
-### Key Highlights
-- 🎙️ **Full-Duplex Voice AI**: Real-time voice agent interaction with interrupt handling and low latency.
-- 🇮🇳 **Indic Language Support**: Native integration with Sarvam's models (Saaras, Bulbul, etc.) across 11+ Indian languages.
-- 📱 **Cross-Platform**: Seamless audio pipeline and lifecycle management for Android & iOS.
-- 🔐 **Secure Architecture**: Built to easily interface with custom auth gateways or proxy servers to protect backend API keys.
-
 [![CI](https://github.com/sarvamai/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/sarvamai/sarvam-mobile/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
