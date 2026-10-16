@@ -15,7 +15,7 @@ Official React Native & Expo SDK for **Sarvam AI** Indic language models, speech
 
 ### 1. Installation
 
-Install `@sarvam-mobile/react-native` and core peer dependency:
+Install [`@sarvam-mobile/react-native`](https://www.npmjs.com/package/@sarvam-mobile/react-native) and the core package [`@sarvam-mobile/core`](https://www.npmjs.com/package/@sarvam-mobile/core):
 
 ```bash
 # In Expo projects:

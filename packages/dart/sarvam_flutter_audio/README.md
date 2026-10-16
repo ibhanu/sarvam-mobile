@@ -1,6 +1,6 @@
 # sarvam_flutter_audio
 
-[![pub package](https://img.shields.io/badge/pub-0.1.0-blue.svg)](https://pub.dev/packages/sarvam_flutter_audio)
+[![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Platforms: Flutter](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue)](https://flutter.dev)
 
@@ -58,8 +58,8 @@ Add `sarvam` and `sarvam_flutter_audio` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sarvam: ^0.1.0
-  sarvam_flutter_audio: ^0.1.0
+  sarvam: ^0.2.0
+  sarvam_flutter_audio: ^0.2.0
 ```
 
 ---

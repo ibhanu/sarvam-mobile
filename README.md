@@ -3,6 +3,11 @@
 [![CI](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
+[![npm @sarvam-mobile/core](https://img.shields.io/npm/v/@sarvam-mobile/core.svg?label=npm%20%40sarvam-mobile%2Fcore)](https://www.npmjs.com/package/@sarvam-mobile/core)
+[![npm @sarvam-mobile/react-native](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg?label=npm%20%40sarvam-mobile%2Freact-native)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
+[![pub.dev sarvam](https://img.shields.io/pub/v/sarvam.svg?label=pub.dev%20sarvam)](https://pub.dev/packages/sarvam)
+[![pub.dev sarvam_flutter_audio](https://img.shields.io/pub/v/sarvam_flutter_audio.svg?label=pub.dev%20sarvam_flutter_audio)](https://pub.dev/packages/sarvam_flutter_audio)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
 
 ## 📌 About
 
@@ -81,16 +86,16 @@ flowchart TD
 
 ## 📦 Monorepo Packages
 
-| Platform / Ecosystem | Package Identifier | Directory | Description |
-| :--- | :--- | :--- | :--- |
-| **Android / Kotlin** | `ai.sarvam:sarvam-core` | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client (Ktor/OkHttp, Coroutines, Serialization) |
-| **Android / Kotlin** | `ai.sarvam:sarvam-android-audio` | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
-| **iOS / Swift** | `Sarvam` | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package (Swift 6 concurrency, URLSession, SSE) |
-| **iOS / Swift** | `SarvamAudio` | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
-| **TypeScript / Web** | `@sarvam-mobile/core` | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK (Fetch, WS, AsyncIterable) |
-| **React Native** | `@sarvam-mobile/react-native` | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization |
-| **Flutter / Dart** | `sarvam` | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client (Sound Null Safety, Streams, http) |
-| **Flutter / Dart** | `sarvam_flutter_audio` | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
+| Platform / Ecosystem | Package Identifier | Registry / Distribution | Directory | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **Flutter / Dart** | `sarvam` | [![pub package](https://img.shields.io/pub/v/sarvam.svg)](https://pub.dev/packages/sarvam) | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client (Sound Null Safety, Streams, http) |
+| **Flutter / Dart** | `sarvam_flutter_audio` | [![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio) | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
+| **TypeScript / Web** | `@sarvam-mobile/core` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core) | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK (Fetch, WS, AsyncIterable) |
+| **React Native** | `@sarvam-mobile/react-native` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native) | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization |
+| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-v0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package (Swift 6 concurrency, URLSession, SSE) |
+| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-v0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
+| **Android / Kotlin** | `ai.sarvam:sarvam-core` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client (Ktor/OkHttp, Coroutines, Serialization) |
+| **Android / Kotlin** | `ai.sarvam:sarvam-android-audio` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
 
 ---
 
@@ -128,8 +133,8 @@ Both `Sarvam` and `SarvamAudio` include bundled Apple Privacy Manifests (`Privac
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("ai.sarvam:sarvam-core:0.1.0")
-    implementation("ai.sarvam:sarvam-android-audio:0.1.0") // Optional
+    implementation("ai.sarvam:sarvam-core:0.2.0")
+    implementation("ai.sarvam:sarvam-android-audio:0.2.0") // Optional
 }
 
 // Instantiate client with TokenAuth
@@ -154,7 +159,7 @@ println(translation.translatedText)
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/sarvamai/sarvam-mobile.git", from: "0.1.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.0")
 ]
 
 import Sarvam
@@ -201,8 +206,8 @@ console.log(response.translatedText);
 ```yaml
 # pubspec.yaml
 dependencies:
-  sarvam: ^0.1.0
-  sarvam_flutter_audio: ^0.1.0 # Optional
+  sarvam: ^0.2.0
+  sarvam_flutter_audio: ^0.2.0 # Optional
 ```
 ```dart
 import 'package:sarvam/sarvam.dart';

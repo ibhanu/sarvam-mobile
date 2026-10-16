@@ -16,6 +16,8 @@ Runs out of the box in Node.js 18+, browsers, Bun, Deno, Edge runtimes, Cloudfla
 
 ### 1. Installation
 
+Install [`@sarvam-mobile/core`](https://www.npmjs.com/package/@sarvam-mobile/core):
+
 ```bash
 npm install @sarvam-mobile/core
 # or
