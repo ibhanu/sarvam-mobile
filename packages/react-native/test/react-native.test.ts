@@ -2,7 +2,7 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createMockServer } from '../../../conformance/mock-server/dist/src/server.js';
 type MockServerInstance = ReturnType<typeof createMockServer>;
-import WebSocket from '../../../conformance/mock-server/node_modules/ws/index.js';
+import WebSocket from 'ws';
 import {
   SarvamReactNativeClient,
   ReactNativeWebSocketFactory,

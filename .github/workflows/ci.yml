@@ -105,6 +105,7 @@ jobs:
           if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
             cd conformance/mock-server
             npm ci || npm install
+            npm run build
             npm start &
             echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
             cd ../..
@@ -149,11 +150,17 @@ jobs:
           if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
             cd conformance/mock-server
             npm ci || npm install
+            npm run build
             npm start &
             echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
             cd ../..
             sleep 2
           fi
+
+      - name: Select Xcode 16
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer 2>/dev/null || true
+          swift --version
 
       - name: Run Swift Package Tests & Export LCOV Coverage
         run: |
@@ -161,10 +168,10 @@ jobs:
           mkdir -p packages/swift/coverage
           BIN_PATH=$(swift build --show-bin-path)
           PROFDATA="$BIN_PATH/codecov/default.profdata"
-          TEST_BIN=$(find "$BIN_PATH" -name "*PackageTests.xctest" | head -n 1)/Contents/MacOS/SarvamPackageTests
+          TEST_BIN=$(find "$BIN_PATH" -name "SarvamPackageTests" -o -name "SarvamTests" | grep "Contents/MacOS" | head -n 1)
           if [ -f "$TEST_BIN" ] && [ -f "$PROFDATA" ]; then
-            xcrun llvm-cov export -format="lcov" "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests" > packages/swift/coverage/lcov.info
-            xcrun llvm-cov report "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests"
+            xcrun llvm-cov export -format="lcov" "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests" > packages/swift/coverage/lcov.info || true
+            xcrun llvm-cov report "$TEST_BIN" -instr-profile="$PROFDATA" -ignore-filename-regex=".build|Tests" || true
           fi
 
       - name: Stop Conformance Mock Server
@@ -193,6 +200,7 @@ jobs:
           if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
             cd conformance/mock-server
             npm ci || npm install
+            npm run build
             npm start &
             echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
             cd ../..
@@ -201,8 +209,8 @@ jobs:
 
       - name: Build, Typecheck & Coverage TypeScript Core
         run: |
-          cd packages/ts-core
           npm install
+          cd packages/ts-core
           npm run typecheck
           npm run build
           npm run test:coverage
@@ -241,6 +249,7 @@ jobs:
           if [ -d "conformance/mock-server" ] && [ -f "conformance/mock-server/package.json" ]; then
             cd conformance/mock-server
             npm ci || npm install
+            npm run build
             npm start &
             echo "MOCK_SERVER_PID=$!" >> $GITHUB_ENV
             cd ../..
@@ -256,10 +265,10 @@ jobs:
       - name: Analyze & Test Core Dart Package with Coverage
         run: |
           cd packages/dart/sarvam
-          dart pub get
-          dart analyze --fatal-infos
+          flutter pub get
+          flutter analyze --fatal-infos
           if [ -d "test" ]; then
-            dart run coverage:test_with_coverage
+            flutter test --coverage
           fi
 
       - name: Analyze & Test Companion Flutter Audio Package with Coverage
