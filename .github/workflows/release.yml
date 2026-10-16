@@ -119,8 +119,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.x'
           channel: 'stable'
+          cache: true
 
       - name: Dry-run Publish Dart Core Package (sarvam)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

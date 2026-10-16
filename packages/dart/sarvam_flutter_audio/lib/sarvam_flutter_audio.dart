@@ -1,5 +1,5 @@
 /// Companion audio capture, 16 kHz resampling, and audio playback for Sarvam AI Flutter apps.
-library sarvam_flutter_audio;
+library;
 
 export 'package:sarvam/sarvam.dart';
 

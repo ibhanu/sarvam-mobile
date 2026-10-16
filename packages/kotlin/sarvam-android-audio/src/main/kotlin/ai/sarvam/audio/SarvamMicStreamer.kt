@@ -28,12 +28,15 @@ public class SarvamMicStreamer(
 
     public val audioFlow: Flow<ByteArray> = channel.receiveAsFlow()
 
+    @Volatile
     private var captureJob: Job? = null
+    @Volatile
     private var streamingJob: Job? = null
     private val isRunning = AtomicBoolean(false)
 
     public fun isCapturing(): Boolean = isRunning.get()
 
+    @Synchronized
     public fun start(
         scope: CoroutineScope,
         session: SttRealtimeSession? = null

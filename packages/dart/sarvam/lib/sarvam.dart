@@ -1,5 +1,5 @@
 /// Official Dart & Flutter client SDK for Sarvam AI's Indic language models and speech services.
-library sarvam;
+library;
 
 export 'src/client.dart';
 export 'src/core/auth_provider.dart';
