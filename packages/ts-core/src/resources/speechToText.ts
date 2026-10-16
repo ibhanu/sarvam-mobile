@@ -307,7 +307,7 @@ export class SpeechToTextResource {
       formData.append('file', request.file, 'audio.wav');
     } else {
       // React Native file descriptor object
-      formData.append('file', request.file as any, (request.file as any).name || 'audio.wav');
+      formData.append('file', request.file as any);
     }
 
     if (request.model) formData.append('model', request.model);
@@ -353,7 +353,7 @@ export class SpeechToTextResource {
     } else if (typeof Blob !== 'undefined' && request.file instanceof Blob) {
       formData.append('file', request.file, 'audio.wav');
     } else {
-      formData.append('file', request.file as any, (request.file as any).name || 'audio.wav');
+      formData.append('file', request.file as any);
     }
 
     if (request.model) formData.append('model', request.model);

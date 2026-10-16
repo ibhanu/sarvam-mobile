@@ -426,16 +426,18 @@ struct MiddlewareTests {
 
         // 4. RequestExecutor.executeStream with TokenAuth, ProxyAuth, and HTTP >= 400 error body
         let transport = MockHTTPTransport()
-        transport.queueStream(
-            response: HTTPResponse(statusCode: 200, headers: [:], body: Data()),
+        transport.queueStreamResponse(
+            statusCode: 200,
+            headers: [:],
             chunks: [Data([1, 2])]
         )
         let tokenClient = SarvamClient(authProvider: tokenAuth, transport: transport)
-        let stream1 = try await tokenClient.textToSpeech.stream(TextToSpeechRequest(text: "hi", targetLanguageCode: .hiIn))
+        let stream1 = tokenClient.textToSpeech.stream(TextToSpeechRequest(text: "hi", targetLanguageCode: .hiIn))
         for try await _ in stream1 {}
 
-        transport.queueStream(
-            response: HTTPResponse(statusCode: 400, headers: [:], body: Data()),
+        transport.queueStreamResponse(
+            statusCode: 400,
+            headers: [:],
             chunks: [Data("{\"error\":{\"message\":\"stream bad request\"}}".utf8)]
         )
         let proxyClient = SarvamClient(
@@ -443,7 +445,8 @@ struct MiddlewareTests {
             transport: transport
         )
         await #expect(throws: SarvamError.self) {
-            _ = try await proxyClient.textToSpeech.stream(TextToSpeechRequest(text: "hi", targetLanguageCode: .hiIn))
+            let stream2 = proxyClient.textToSpeech.stream(TextToSpeechRequest(text: "hi", targetLanguageCode: .hiIn))
+            for try await _ in stream2 {}
         }
     }
 }

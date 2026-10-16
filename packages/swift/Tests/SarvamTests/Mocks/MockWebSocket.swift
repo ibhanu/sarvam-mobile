@@ -62,6 +62,15 @@ public final class MockWebSocketSession: WebSocketSession, @unchecked Sendable {
         continuation.finish()
     }
 
+    public func emitOpen() {
+        continuation.yield(.open)
+    }
+
+    public func emitError(_ error: SarvamError) {
+        continuation.yield(.error(error))
+        continuation.finish()
+    }
+
     public func finish() {
         continuation.finish()
     }

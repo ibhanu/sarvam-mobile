@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:sarvam/sarvam.dart';
-import 'package:sarvam/src/generated/sarvam_spec_generated.dart';
-import 'package:sarvam/src/realtime/stt_realtime_events.dart';
-import 'package:sarvam/src/realtime/tts_streaming_events.dart';
 import 'package:test/test.dart';
 
 import 'test_helpers.dart';
@@ -288,9 +285,7 @@ void main() {
 
   group('VoiceCloningResource & Models Unit Tests', () {
     test('listVoices, createVoice, getVoice, deleteVoice, convert, stream, connect', () async {
-      HttpRequest? lastRequest;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.endsWith('/voices') && req.method == 'GET') {
           return jsonResponse(data: {
             'voices': [
@@ -420,9 +415,7 @@ void main() {
 
   group('PronunciationDictionaryResource & Models Unit Tests', () {
     test('list, create, update, get, delete operations and models', () async {
-      HttpRequest? lastRequest;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.method == 'GET' && req.url.pathSegments.length > 2) {
           // get specific dict
           return jsonResponse(data: {
@@ -469,7 +462,7 @@ void main() {
       expect(listFromJsonList.dictionaries.length, 1);
 
       // list with empty map
-      final listFromEmptyMap = PronunciationDictionaryListResponse.fromJson({});
+      final listFromEmptyMap = PronunciationDictionaryListResponse.fromJson(<String, dynamic>{});
       expect(listFromEmptyMap.dictionaries, isEmpty);
 
       // create with file.field == 'file'
@@ -506,10 +499,8 @@ void main() {
 
   group('DocAiResource & Models Unit Tests', () {
     test('digitise, extract, createUploadUrl, getStatus, getResults, getDownloadUrl, digitiseAndWait, extractAndWait', () async {
-      HttpRequest? lastRequest;
       var pollCalls = 0;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.contains('/status')) {
           pollCalls++;
           return jsonResponse(data: {
@@ -621,10 +612,8 @@ void main() {
 
   group('DocumentTranslationResource & DubbingResource Unit Tests', () {
     test('DocumentTranslationResource operations and models', () async {
-      HttpRequest? lastRequest;
       var liveCalls = 0;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.contains('/start')) {
           return jsonResponse(data: {'job_id': 'dt-1', 'job_state': 'Started'});
         }
@@ -702,10 +691,8 @@ void main() {
     });
 
     test('DubbingResource operations and models', () async {
-      HttpRequest? lastRequest;
       var dubbingCalls = 0;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.contains('/start')) {
           return jsonResponse(data: {'job_id': 'dub-1', 'status': 'Started'});
         }
@@ -872,9 +859,7 @@ data: {"id":"resp-1","type":"response.completed"}
 
   group('TextResource & TextToSpeechResource Unit Tests', () {
     test('TextResource translate, transliterate, identifyLanguage', () async {
-      HttpRequest? lastRequest;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.contains('/transliterate')) {
           return jsonResponse(data: {'transliterated_text': 'namaste'});
         }
@@ -915,9 +900,7 @@ data: {"id":"resp-1","type":"response.completed"}
     });
 
     test('TextToSpeechResource convert, stream, connect and models', () async {
-      HttpRequest? lastRequest;
       final mockTransport = MockHttpTransport((req) async {
-        lastRequest = req;
         if (req.url.path.contains('/text-to-speech/stream')) {
           return chunkedBinaryResponse(chunks: [Uint8List.fromList([10, 20])]);
         }
@@ -1149,8 +1132,8 @@ data: {"id":"resp-1","type":"response.completed"}
       expect(copiedReq.url, baseReq.url);
       expect(copiedReq.method, 'POST');
 
-      final c1 = SarvamCredentials(token: List.filled(1, 'tok').join(), expiresAtEpochMs: 100);
-      final c2 = SarvamCredentials(token: List.filled(1, 'tok').join(), expiresAtEpochMs: 100);
+      final c1 = BearerToken(List.filled(1, 'tok').join(), expiresAtEpochMs: 100);
+      final c2 = BearerToken(List.filled(1, 'tok').join(), expiresAtEpochMs: 100);
       expect(c1, equals(c2));
 
       final cancelEx = JobCancelledException(List.filled(1, 'aborted').join());
@@ -1311,6 +1294,9 @@ data: {"id":"resp-1","type":"response.completed"}
               'error_message': 'boom',
             });
           }
+          if (path.endsWith('/v2/models')) {
+            return jsonResponse(data: {'data': <dynamic>[]});
+          }
           if (path.contains('/voices/')) {
             return jsonResponse(data: {
               'data': {'voice_id': 'v1', 'status': 'ready'},
@@ -1330,7 +1316,6 @@ data: {"id":"resp-1","type":"response.completed"}
             'detected_language': 'hi-IN',
             'audios': [base64Encode([1])],
             'voices': <dynamic>[],
-            'data': <dynamic>[],
           });
         }),
       );

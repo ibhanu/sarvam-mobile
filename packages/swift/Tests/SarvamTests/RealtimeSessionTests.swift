@@ -207,21 +207,26 @@ struct RealtimeSessionTests {
         let badAudio = TtsStreamEvent.parse(jsonString: "{\"type\":\"audio\",\"audio\":\"not-base-64!!\"}")
         #expect(badAudio == .unknown(rawJson: "{\"type\":\"audio\",\"audio\":\"not-base-64!!\"}"))
 
-        // event final / completion
+        // event final / completion / unknown event name
         let finalEv = TtsStreamEvent.parse(jsonString: "{\"type\":\"event\",\"data\":{\"event\":\"final\",\"request_id\":\"req-1\"}}")
         #expect(finalEv == .completed(requestId: "req-1"))
         let compEv = TtsStreamEvent.parse(jsonString: "{\"type\":\"event\",\"data\":{\"event_type\":\"completion\",\"request_id\":\"req-2\"}}")
         #expect(compEv == .completed(requestId: "req-2"))
+        let otherEv = TtsStreamEvent.parse(jsonString: "{\"type\":\"event\",\"data\":{\"event\":\"progress\"}}")
+        #expect(otherEv == .unknown(rawJson: "{\"type\":\"event\",\"data\":{\"event\":\"progress\"}}"))
 
-        // error
+        // error with and without code
         let errEv = TtsStreamEvent.parse(jsonString: "{\"type\":\"error\",\"data\":{\"message\":\"TTS failed\",\"code\":\"tts_err\"}}")
         #expect(errEv == .error(message: "TTS failed", code: "tts_err"))
+        let errEvNoCode = TtsStreamEvent.parse(jsonString: "{\"type\":\"error\"}")
+        #expect(errEvNoCode == .error(message: "Unknown TTS error"))
 
         // unknown & invalid JSON
         let unk = TtsStreamEvent.parse(jsonString: "{\"type\":\"ping\"}")
         #expect(unk == .unknown(rawJson: "{\"type\":\"ping\"}"))
         let inv = TtsStreamEvent.parse(jsonString: "not-json")
         #expect(inv == .unknown(rawJson: "not-json"))
+        #expect(SttRealtimeEvent.sessionEnd() == .sessionEnd(durationSeconds: nil))
     }
 
     // MARK: - TtsStreamingSession Connection, Events & Outbound Tests

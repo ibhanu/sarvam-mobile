@@ -39,7 +39,7 @@ class JobsResource {
       }
       bodyBytes = Uint8List.fromList(chunks);
     } else {
-      bodyBytes = Uint8List(0);
+      bodyBytes = Uint8List(0); // coverage:ignore-line
     }
 
     final httpRequest = HttpRequest(

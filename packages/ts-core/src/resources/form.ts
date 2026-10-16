@@ -15,8 +15,8 @@ export function appendFileInput(
   } else if (typeof Blob !== 'undefined' && fileInput instanceof Blob) {
     formData.append(fieldName, fileInput, defaultFileName);
   } else if (typeof fileInput === 'object' && fileInput !== null && 'uri' in fileInput) {
-    formData.append(fieldName, fileInput as any, (fileInput as any).name || defaultFileName);
+    formData.append(fieldName, fileInput as any);
   } else {
-    formData.append(fieldName, fileInput as any, defaultFileName);
+    formData.append(fieldName, fileInput as any);
   }
 }

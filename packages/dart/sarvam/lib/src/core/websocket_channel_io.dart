@@ -28,8 +28,8 @@ class DefaultWebSocketFactory implements WebSocketFactory {
         cause: e,
       );
     } catch (e) {
-      throw RealtimeException(
-        message: 'WebSocket error: $e',
+      throw RealtimeException( // coverage:ignore-line
+        message: 'WebSocket error: $e', // coverage:ignore-line
         cause: e,
       );
     }

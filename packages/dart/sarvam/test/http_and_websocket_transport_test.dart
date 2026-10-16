@@ -6,7 +6,6 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sarvam/sarvam.dart';
-import 'package:sarvam/src/core/package_http_transport.dart';
 import 'package:sarvam/src/core/websocket_channel_io.dart';
 import 'package:test/test.dart';
 
