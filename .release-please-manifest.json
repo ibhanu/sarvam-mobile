@@ -3,6 +3,6 @@
   "packages/swift": "0.2.1",
   "packages/ts-core": "0.3.0",
   "packages/react-native": "0.3.0",
-  "packages/dart/sarvam": "0.2.1",
+  "packages/dart/sarvam": "0.3.0",
   "packages/dart/sarvam_flutter_audio": "0.2.1"
 }
