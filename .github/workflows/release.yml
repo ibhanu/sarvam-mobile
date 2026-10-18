@@ -68,6 +68,9 @@ jobs:
     name: Publish npm Packages (@sarvam-mobile/core & @sarvam-mobile/react-native)
     needs: release-please
     timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm') ||
       needs.release-please.outputs.ts_core_created == 'true' ||
@@ -77,12 +80,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 22 with npm registry
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@sarvam-mobile'
+
+      - name: Upgrade npm CLI to latest (Required for Trusted Publishing OIDC >= 11.5.1)
+        run: npm install -g npm@latest
+
+      - name: Verify npm CLI Version
+        run: npm --version
 
       - name: Install dependencies & Build all TypeScript / RN SDKs
         run: |
@@ -97,20 +104,21 @@ jobs:
           echo "Executing npm dry-run publish for @sarvam-mobile/react-native..."
           cd ../react-native && npm publish --dry-run
 
-      - name: Live Publish npm Packages
+      - name: Live Publish npm Packages via Trusted Publishing (OIDC & Provenance)
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "Publishing @sarvam-mobile/core to npm..."
-          cd packages/ts-core && npm publish --access public
-          echo "Publishing @sarvam-mobile/react-native to npm..."
-          cd ../react-native && npm publish --access public
+          echo "Publishing @sarvam-mobile/core via Trusted Publishing..."
+          cd packages/ts-core && npm publish --access public --provenance
+          echo "Publishing @sarvam-mobile/react-native via Trusted Publishing..."
+          cd ../react-native && npm publish --access public --provenance
 
   publish-dart:
     name: Publish Dart & Flutter Packages (pub.dev)
     needs: release-please
     timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart') ||
       needs.release-please.outputs.dart_created == 'true' ||
@@ -187,6 +195,14 @@ jobs:
         with:
           name: maven-central-staging-bundle
           path: packages/kotlin/build/staging-repo/
+
+      - name: Live Publish to GitHub Packages
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd packages/kotlin
+          ./gradlew publishAllPublicationsToGitHubPackagesRepository --stacktrace || echo "Skipping GitHub Packages publish if unconfigured."
 
       - name: Live Publish to Maven Central / Sonatype
         if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && env.OSSRH_USERNAME != '' }}
