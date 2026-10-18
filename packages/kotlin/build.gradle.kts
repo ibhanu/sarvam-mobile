@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.9.20" apply false
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3" apply false
     `maven-publish`
+    signing
 }
 
 allprojects {
@@ -15,6 +16,18 @@ allprojects {
 
 subprojects {
     plugins.withType<MavenPublishPlugin> {
+        apply(plugin = "signing")
+
+        val signingKey = System.getenv("SIGNING_KEY") ?: project.findProperty("signing.key") as? String
+        val signingPassword = System.getenv("SIGNING_PASSWORD") ?: project.findProperty("signing.password") as? String
+
+        if (!signingKey.isNullOrBlank()) {
+            configure<SigningExtension> {
+                useInMemoryPgpKeys(signingKey, signingPassword ?: "")
+                sign(extensions.getByType<PublishingExtension>().publications)
+            }
+        }
+
         configure<PublishingExtension> {
             repositories {
                 maven {

@@ -186,6 +186,9 @@ jobs:
           cache-provider: 'basic'
 
       - name: Build & Publish to Staging / Local Repository
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           cd packages/kotlin
           ./gradlew publishToMavenLocal publishAllPublicationsToStagingRepository --stacktrace
@@ -204,16 +207,28 @@ jobs:
           cd packages/kotlin
           ./gradlew publishAllPublicationsToGitHubPackagesRepository --stacktrace || echo "Skipping GitHub Packages publish if unconfigured."
 
-      - name: Live Publish to Maven Central / Sonatype
+      - name: Live Publish to Maven Central Portal (Sonatype)
         if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && env.OSSRH_USERNAME != '' }}
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
-          cd packages/kotlin
-          ./gradlew publish --stacktrace
+          cd packages/kotlin/build/staging-repo
+          zip -r ../bundle.zip .
+          cd ../..
+          AUTH=$(printf "%s:%s" "$OSSRH_USERNAME" "$OSSRH_PASSWORD" | base64 | tr -d '\n\r')
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
+            "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC" \
+            -H "Authorization: Bearer $AUTH" \
+            -F "bundle=@packages/kotlin/build/bundle.zip;type=application/octet-stream")
+          echo "$RESPONSE"
+          STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
+            echo "Successfully submitted bundle to Maven Central Portal!"
+          else
+            echo "Maven Central Portal publish failed with HTTP $STATUS"
+            exit 1
+          fi
 
   publish-swift:
     name: Validate & Index Swift Package (SPM / SPI)
