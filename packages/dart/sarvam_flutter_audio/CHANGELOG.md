@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1](https://github.com/ibhanu/sarvam-mobile/compare/dart-audio-v0.2.0...dart-audio-v0.2.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* **dart:** loosen sarvam dependency constraint to ^0.2.0 in sarvam_flutter_audio ([f7d3717](https://github.com/ibhanu/sarvam-mobile/commit/f7d3717d952a771c4cf780c165c4e601478d13b4))
+* update repository and issue tracker URLs to ibhanu/sarvam-mobile and bump dart SDKs to 0.2.1 ([a2c1ab1](https://github.com/ibhanu/sarvam-mobile/commit/a2c1ab1f354719724e02c629f34a3a4f1efb7646))
+
 ## [0.2.1] - 2026-10-16
 
 ### Fixed
