@@ -42,7 +42,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sarvam-mobile/core": "^0.2.0"
+    "@sarvam-mobile/core": ">=0.2.0 <1.0.0"
   },
   "peerDependencies": {
     "react": "*",
