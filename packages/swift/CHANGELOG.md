@@ -5,6 +5,13 @@ All notable changes to the Sarvam AI Swift SDK will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1](https://github.com/ibhanu/sarvam-mobile/compare/swift-v0.3.0...swift-v0.3.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* **release:** add Rust build to publish-swift and make bridge version assertions resilient to version bumps ([2569b26](https://github.com/ibhanu/sarvam-mobile/commit/2569b26d8d8b5f76b17d5386020778042600e4da))
+
 ## [0.3.0](https://github.com/ibhanu/sarvam-mobile/compare/swift-v0.2.1...swift-v0.3.0) (2026-10-18)
 
 
