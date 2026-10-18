@@ -1,9 +1,9 @@
 {
-  "packages/rust-core": "0.2.0",
+  "packages/rust-core": "0.3.0",
   "packages/kotlin": "0.1.0",
-  "packages/swift": "0.2.1",
-  "packages/ts-core": "0.3.0",
-  "packages/react-native": "0.3.0",
-  "packages/dart/sarvam": "0.3.0",
-  "packages/dart/sarvam_flutter_audio": "0.2.1"
+  "packages/swift": "0.3.0",
+  "packages/ts-core": "0.4.0",
+  "packages/react-native": "0.4.0",
+  "packages/dart/sarvam": "0.4.0",
+  "packages/dart/sarvam_flutter_audio": "0.3.0"
 }

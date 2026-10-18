@@ -10,14 +10,14 @@
 [![codecov](https://codecov.io/gh/ibhanu/sarvam-mobile/branch/main/graph/badge.svg)](https://codecov.io/gh/ibhanu/sarvam-mobile)
 [![Coverage](https://img.shields.io/badge/Coverage-97.8%25-brightgreen.svg)](#-code-coverage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Rust Core](https://img.shields.io/badge/Rust%20Core-0.2.0-DEA584.svg?logo=rust)](packages/rust-core)
+[![Rust Core](https://img.shields.io/badge/Rust%20Core-0.3.0-DEA584.svg?logo=rust)](packages/rust-core)
 [![Release Please](https://img.shields.io/badge/release--please-automated-orange.svg?logo=github)](https://github.com/googleapis/release-please)
 [![npm @sarvam-mobile/core](https://img.shields.io/npm/v/@sarvam-mobile/core.svg?label=npm%20%40sarvam-mobile%2Fcore)](https://www.npmjs.com/package/@sarvam-mobile/core)
 [![npm @sarvam-mobile/react-native](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg?label=npm%20%40sarvam-mobile%2Freact-native)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
 [![pub.dev sarvam](https://img.shields.io/pub/v/sarvam.svg?label=pub.dev%20sarvam)](https://pub.dev/packages/sarvam)
 [![pub.dev sarvam_flutter_audio](https://img.shields.io/pub/v/sarvam_flutter_audio.svg?label=pub.dev%20sarvam_flutter_audio)](https://pub.dev/packages/sarvam_flutter_audio)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg?label=maven%20io.github.ibhanu%3Asarvam-core)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core)
-[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
 
 ## 📌 About
 
@@ -107,13 +107,13 @@ flowchart TD
 
 | Platform / Ecosystem | Package Identifier | Registry / Distribution | Directory | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Shared Rust Core** | `sarvam-rust-core` | [![crates.io](https://img.shields.io/badge/crates.io-0.2.0-orange.svg)](packages/rust-core) | [`packages/rust-core`](packages/rust-core) | Shared high-performance engine (Auth, 16kHz DSP resampler, SSE, Retry) |
+| **Shared Rust Core** | `sarvam-rust-core` | [![crates.io](https://img.shields.io/badge/crates.io-0.3.0-orange.svg)](packages/rust-core) | [`packages/rust-core`](packages/rust-core) | Shared high-performance engine (Auth, 16kHz DSP resampler, SSE, Retry) |
 | **Flutter / Dart** | `sarvam` | [![pub package](https://img.shields.io/pub/v/sarvam.svg)](https://pub.dev/packages/sarvam) | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client with FFI Rust bridge & pure Dart fallback |
 | **Flutter / Dart** | `sarvam_flutter_audio` | [![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio) | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
 | **TypeScript / Web** | `@sarvam-mobile/core` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core) | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK with Wasm core bridge |
 | **React Native** | `@sarvam-mobile/react-native` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native) | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization & Wasm bridge |
-| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package with C-FFI Rust core bridge |
-| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
+| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package with C-FFI Rust core bridge |
+| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
 | **Android / Kotlin** | `io.github.ibhanu:sarvam-core` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client with JNI Rust core bridge |
 | **Android / Kotlin** | `io.github.ibhanu:sarvam-android-audio` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-android-audio.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-android-audio) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
 
@@ -200,7 +200,7 @@ println(translation.translatedText)
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.1")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.3.0")
 ]
 
 import Sarvam
@@ -247,8 +247,8 @@ console.log(response.translatedText);
 ```yaml
 # pubspec.yaml
 dependencies:
-  sarvam: ^0.3.0
-  sarvam_flutter_audio: ^0.2.1 # Optional
+  sarvam: ^0.4.0
+  sarvam_flutter_audio: ^0.3.0 # Optional
 ```
 ```dart
 import 'package:sarvam/sarvam.dart';

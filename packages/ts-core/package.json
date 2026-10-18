@@ -1,6 +1,6 @@
 {
   "name": "@sarvam-mobile/core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Official TypeScript Core SDK for Sarvam AI Indic language models and speech services",
   "author": "Sarvam AI <dev@sarvam.ai>",
   "license": "MIT",

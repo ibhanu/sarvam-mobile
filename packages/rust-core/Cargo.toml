@@ -1,6 +1,6 @@
 [package]
 name = "sarvam-rust-core"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "Shared cross-platform Rust core engine for Sarvam AI Mobile SDKs (Auth, Retry/Backoff, SSE/WS State Machines, 16kHz PCM Audio DSP, and C-FFI/JNI/Wasm bindings)"
 license = "MIT"
