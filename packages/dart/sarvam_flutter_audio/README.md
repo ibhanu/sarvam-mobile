@@ -65,8 +65,8 @@ Add `sarvam` and `sarvam_flutter_audio` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sarvam: ^0.2.0
-  sarvam_flutter_audio: ^0.2.1
+  sarvam: ^0.4.0
+  sarvam_flutter_audio: ^0.3.0
 ```
 
 ---
