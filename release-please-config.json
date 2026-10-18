@@ -12,10 +12,11 @@
       ]
     },
     "packages/kotlin": {
-      "release-type": "maven",
+      "release-type": "simple",
       "package-name": "sarvam-core",
       "component": "kotlin",
       "extra-files": [
+        "packages/kotlin/gradle.properties",
         "packages/kotlin/README.md",
         "README.md"
       ]

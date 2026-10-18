@@ -40,6 +40,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
       rust_core_created: ${{ steps.release.outputs['packages/rust-core--release_created'] }}
       rust_core_version: ${{ steps.release.outputs['packages/rust-core--version'] }}
       rust_core_tag: ${{ steps.release.outputs['packages/rust-core--tag_name'] }}
@@ -77,9 +78,11 @@ jobs:
       contents: read
       id-token: write
     if: |
-      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm')) ||
       needs.release-please.outputs.ts_core_created == 'true' ||
-      needs.release-please.outputs.react_native_created == 'true'
+      contains(needs.release-please.outputs.paths_released, 'packages/ts-core') ||
+      needs.release-please.outputs.react_native_created == 'true' ||
+      contains(needs.release-please.outputs.paths_released, 'packages/react-native')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -120,10 +123,21 @@ jobs:
           fi
           echo "Publishing @sarvam-mobile/core..."
           cd packages/ts-core
-          npm publish --access public --provenance || npm publish --access public
+          CORE_VER=$(node -p "require('./package.json').version")
+          if npm view "@sarvam-mobile/core@$CORE_VER" version >/dev/null 2>&1; then
+            echo "@sarvam-mobile/core@$CORE_VER already exists on npm. Skipping."
+          else
+            npm publish --access public --provenance || npm publish --access public
+          fi
+
           echo "Publishing @sarvam-mobile/react-native..."
           cd ../react-native
-          npm publish --access public --provenance || npm publish --access public
+          RN_VER=$(node -p "require('./package.json').version")
+          if npm view "@sarvam-mobile/react-native@$RN_VER" version >/dev/null 2>&1; then
+            echo "@sarvam-mobile/react-native@$RN_VER already exists on npm. Skipping."
+          else
+            npm publish --access public --provenance || npm publish --access public
+          fi
 
   publish-dart:
     name: Dispatch pub.dev Tag Publishing
@@ -133,9 +147,11 @@ jobs:
       actions: write
       contents: read
     if: |
-      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart')) ||
       needs.release-please.outputs.dart_created == 'true' ||
-      needs.release-please.outputs.dart_audio_created == 'true'
+      contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam') ||
+      needs.release-please.outputs.dart_audio_created == 'true' ||
+      contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam_flutter_audio')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -162,20 +178,30 @@ jobs:
           flutter pub publish --dry-run
 
       - name: Dispatch Tag Publish for Dart Core Package
-        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        if: |
+          (github.event_name != 'workflow_dispatch' || !inputs.dry_run) &&
+          (needs.release-please.outputs.dart_created == 'true' || contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam') || inputs.target == 'all' || inputs.target == 'dart')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="dart-v$(grep 'version:' packages/dart/sarvam/pubspec.yaml | head -n1 | awk '{print $2}')"
+          TAG="${{ needs.release-please.outputs.dart_tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="dart-v$(grep '^version:' packages/dart/sarvam/pubspec.yaml | head -n1 | awk '{print $2}')"
+          fi
           echo "Dispatching publish-dart.yml on tag $TAG..."
           gh workflow run publish-dart.yml --ref "refs/tags/$TAG" || gh workflow run publish-dart.yml
 
       - name: Dispatch Tag Publish for Flutter Companion Audio Package
-        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        if: |
+          (github.event_name != 'workflow_dispatch' || !inputs.dry_run) &&
+          (needs.release-please.outputs.dart_audio_created == 'true' || contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam_flutter_audio') || inputs.target == 'all' || inputs.target == 'dart')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="dart-audio-v$(grep 'version:' packages/dart/sarvam_flutter_audio/pubspec.yaml | head -n1 | awk '{print $2}')"
+          TAG="${{ needs.release-please.outputs.dart_audio_tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="dart-audio-v$(grep '^version:' packages/dart/sarvam_flutter_audio/pubspec.yaml | head -n1 | awk '{print $2}')"
+          fi
           echo "Dispatching publish-dart.yml on tag $TAG..."
           gh workflow run publish-dart.yml --ref "refs/tags/$TAG" || gh workflow run publish-dart.yml
 
@@ -184,8 +210,9 @@ jobs:
     needs: release-please
     timeout-minutes: 15
     if: |
-      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven') ||
-      needs.release-please.outputs.kotlin_created == 'true'
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven')) ||
+      needs.release-please.outputs.kotlin_created == 'true' ||
+      contains(needs.release-please.outputs.paths_released, 'packages/kotlin')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -255,8 +282,9 @@ jobs:
     needs: release-please
     timeout-minutes: 10
     if: |
-      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift') ||
-      needs.release-please.outputs.swift_created == 'true'
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift')) ||
+      needs.release-please.outputs.swift_created == 'true' ||
+      contains(needs.release-please.outputs.paths_released, 'packages/swift')
     runs-on: macos-14
     steps:
       - name: Checkout Repository
@@ -295,8 +323,9 @@ jobs:
     needs: release-please
     timeout-minutes: 10
     if: |
-      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'rust') ||
-      needs.release-please.outputs.rust_core_created == 'true'
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'rust')) ||
+      needs.release-please.outputs.rust_core_created == 'true' ||
+      contains(needs.release-please.outputs.paths_released, 'packages/rust-core')
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository

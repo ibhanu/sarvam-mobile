@@ -45,11 +45,23 @@ jobs:
         run: |
           cd packages/dart/sarvam
           dart pub get
-          dart pub publish --force
+          CURRENT_VER=$(grep '^version:' pubspec.yaml | head -n1 | awk '{print $2}')
+          EXISTS=$(curl -s "https://pub.dev/api/packages/sarvam" | jq -r --arg ver "$CURRENT_VER" '.versions[]? | select(.version == $ver) | .version' 2>/dev/null || true)
+          if [ "$EXISTS" = "$CURRENT_VER" ]; then
+            echo "Version $CURRENT_VER of sarvam is already published on pub.dev. Skipping."
+          else
+            dart pub publish --force
+          fi
 
       - name: Publish Flutter Companion Audio Package (sarvam_flutter_audio)
         if: startsWith(github.ref, 'refs/tags/dart-audio-v')
         run: |
           cd packages/dart/sarvam_flutter_audio
           flutter pub get
-          flutter pub publish --force
+          CURRENT_VER=$(grep '^version:' pubspec.yaml | head -n1 | awk '{print $2}')
+          EXISTS=$(curl -s "https://pub.dev/api/packages/sarvam_flutter_audio" | jq -r --arg ver "$CURRENT_VER" '.versions[]? | select(.version == $ver) | .version' 2>/dev/null || true)
+          if [ "$EXISTS" = "$CURRENT_VER" ]; then
+            echo "Version $CURRENT_VER of sarvam_flutter_audio is already published on pub.dev. Skipping."
+          else
+            flutter pub publish --force
+          fi
