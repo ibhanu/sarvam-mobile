@@ -182,8 +182,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-provider: 'basic'
 
       - name: Build & Publish to Staging / Local Repository
         env:
