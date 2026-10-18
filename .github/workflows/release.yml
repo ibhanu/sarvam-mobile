@@ -263,6 +263,13 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer 2>/dev/null || true
           swift --version
 
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Rust Core Libraries
+        run: |
+          ./scripts/build-rust-core.sh
+
       - name: Build and Test Swift Package
         run: |
           swift build -c release
