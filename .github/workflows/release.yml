@@ -9,7 +9,7 @@ on:
         description: 'Dry run (validate build and packaging without publishing)'
         required: true
         type: boolean
-        default: true
+        default: false
       target:
         description: 'Target registry to publish'
         required: true
