@@ -36,6 +36,7 @@ jobs:
   release-please:
     name: Release Please (Automated Versioning & Changelogs)
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       ts_core_created: ${{ steps.release.outputs['packages/ts-core--release_created'] }}
@@ -66,6 +67,7 @@ jobs:
   publish-npm:
     name: Publish npm Packages (@sarvam-mobile/core & @sarvam-mobile/react-native)
     needs: release-please
+    timeout-minutes: 10
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm') ||
       needs.release-please.outputs.ts_core_created == 'true' ||
@@ -73,13 +75,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Node.js 22 with npm registry
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
+          scope: '@sarvam-mobile'
 
       - name: Install dependencies & Build all TypeScript / RN SDKs
         run: |
@@ -100,13 +103,14 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "Publishing @sarvam-mobile/core to npm..."
-          cd packages/ts-core && npm publish --access public --provenance
+          cd packages/ts-core && npm publish --access public
           echo "Publishing @sarvam-mobile/react-native to npm..."
-          cd ../react-native && npm publish --access public --provenance
+          cd ../react-native && npm publish --access public
 
   publish-dart:
     name: Publish Dart & Flutter Packages (pub.dev)
     needs: release-please
+    timeout-minutes: 10
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart') ||
       needs.release-please.outputs.dart_created == 'true' ||
@@ -114,7 +118,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -153,22 +157,23 @@ jobs:
   publish-maven:
     name: Publish Kotlin & Android Artifacts (Maven Central)
     needs: release-please
+    timeout-minutes: 15
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven') ||
       needs.release-please.outputs.kotlin_created == 'true'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
         with:
           cache-provider: 'basic'
 
@@ -178,7 +183,7 @@ jobs:
           ./gradlew publishToMavenLocal publishAllPublicationsToStagingRepository --stacktrace
 
       - name: Upload Maven Staging Artifacts Bundle
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: maven-central-staging-bundle
           path: packages/kotlin/build/staging-repo/
@@ -197,15 +202,21 @@ jobs:
   publish-swift:
     name: Validate & Index Swift Package (SPM / SPI)
     needs: release-please
+    timeout-minutes: 10
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift') ||
       needs.release-please.outputs.swift_created == 'true'
     runs-on: macos-14
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Select Xcode 16
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer 2>/dev/null || sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer 2>/dev/null || true
+          swift --version
 
       - name: Build and Test Swift Package
         run: |
