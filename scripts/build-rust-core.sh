@@ -13,9 +13,12 @@ cargo test --manifest-path "$ROOT_DIR/packages/rust-core/Cargo.toml"
 echo "==> [3/4] Building native release binary (cdylib + staticlib)..."
 cargo build --release --manifest-path "$ROOT_DIR/packages/rust-core/Cargo.toml"
 
-echo "==> [4/4] Building WebAssembly release binary (wasm32-unknown-unknown)..."
-cargo build --release --target wasm32-unknown-unknown --manifest-path "$ROOT_DIR/packages/rust-core/Cargo.toml"
+if rustup target list --installed 2>/dev/null | grep -q "^wasm32-unknown-unknown$"; then
+  echo "==> [4/4] Building WebAssembly release binary (wasm32-unknown-unknown)..."
+  cargo build --release --target wasm32-unknown-unknown --manifest-path "$ROOT_DIR/packages/rust-core/Cargo.toml"
+  ls -lh "$ROOT_DIR/packages/rust-core/target/wasm32-unknown-unknown/release/sarvam_rust_core.wasm" || true
+else
+  echo "==> [4/4] Skipping WebAssembly release binary (wasm32-unknown-unknown target not installed)"
+fi
 
-ls -lh \
-  "$ROOT_DIR/packages/rust-core/target/release/libsarvam_rust_core."* \
-  "$ROOT_DIR/packages/rust-core/target/wasm32-unknown-unknown/release/sarvam_rust_core.wasm"
+ls -lh "$ROOT_DIR/packages/rust-core/target/release/libsarvam_rust_core."* || true
