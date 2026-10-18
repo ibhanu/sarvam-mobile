@@ -221,14 +221,15 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
+          ROOT_DIR=$(pwd)
           cd packages/kotlin/build/staging-repo
-          zip -r ../bundle.zip .
-          cd ../..
+          zip -r "$ROOT_DIR/packages/kotlin/build/bundle.zip" .
+          cd "$ROOT_DIR"
           AUTH=$(printf "%s:%s" "$OSSRH_USERNAME" "$OSSRH_PASSWORD" | base64 | tr -d '\n\r')
           RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
             "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC" \
             -H "Authorization: Bearer $AUTH" \
-            -F "bundle=@packages/kotlin/build/bundle.zip;type=application/octet-stream")
+            -F "bundle=@$ROOT_DIR/packages/kotlin/build/bundle.zip;type=application/octet-stream")
           echo "$RESPONSE"
           STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
           if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
