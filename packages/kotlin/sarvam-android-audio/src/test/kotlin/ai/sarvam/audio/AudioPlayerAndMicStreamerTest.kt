@@ -20,6 +20,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -294,9 +295,11 @@ class AudioPlayerAndMicStreamerTest {
         // Allow driver to return -1 and trigger natural termination
         allowNegativeRead.countDown()
 
-        // Await capture coroutine completion cleanly without flaky sleeping
-        withTimeout(5000) {
-            job1.join()
+        // Await capture coroutine completion cleanly using wall-clock dispatcher
+        withContext(Dispatchers.Default) {
+            withTimeout(5000) {
+                job1.join()
+            }
         }
         assertFalse(streamer.isCapturing())
 
