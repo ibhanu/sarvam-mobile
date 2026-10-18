@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://sarvam.ai">
-    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+    <img src="https://raw.githubusercontent.com/ibhanu/sarvam-mobile/main/assets/sarvam-ai-website.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 860px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
   </a>
 </p>
 
