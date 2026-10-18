@@ -8,10 +8,25 @@ void main() {
     late SarvamRustCoreBridge bridge;
 
     setUpAll(() {
-      final String dylibPath = File(
-        '../../rust-core/target/release/libsarvam_rust_core.dylib',
-      ).absolute.path;
-      bridge = SarvamRustCoreBridge.open(dylibPath);
+      final ext = Platform.isMacOS
+          ? 'dylib'
+          : Platform.isWindows
+              ? 'dll'
+              : 'so';
+      final candidates = <String>[
+        '../../rust-core/target/release/libsarvam_rust_core.$ext',
+        '../../rust-core/target/debug/libsarvam_rust_core.$ext',
+        if (Platform.isWindows) '../../rust-core/target/release/sarvam_rust_core.dll',
+      ];
+      String? foundPath;
+      for (final c in candidates) {
+        final f = File(c);
+        if (f.existsSync()) {
+          foundPath = f.absolute.path;
+          break;
+        }
+      }
+      bridge = SarvamRustCoreBridge.open(foundPath);
     });
 
     test('resolves version and proxy environment URLs via Rust FFI', () {
