@@ -89,6 +89,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm CLI to latest (Required for Trusted Publishing OIDC >= 11.5.1)
         run: npm install -g npm@latest
@@ -109,13 +110,20 @@ jobs:
           echo "Executing npm dry-run publish for @sarvam-mobile/react-native..."
           cd ../react-native && npm publish --dry-run
 
-      - name: Live Publish npm Packages via Trusted Publishing (OIDC & Provenance)
+      - name: Live Publish npm Packages
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          echo "Publishing @sarvam-mobile/core via Trusted Publishing..."
-          cd packages/ts-core && npm publish --access public --provenance
-          echo "Publishing @sarvam-mobile/react-native via Trusted Publishing..."
-          cd ../react-native && npm publish --access public --provenance
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          fi
+          echo "Publishing @sarvam-mobile/core..."
+          cd packages/ts-core
+          npm publish --access public --provenance || npm publish --access public
+          echo "Publishing @sarvam-mobile/react-native..."
+          cd ../react-native
+          npm publish --access public --provenance || npm publish --access public
 
   publish-dart:
     name: Dispatch pub.dev Tag Publishing
@@ -154,28 +162,22 @@ jobs:
           flutter pub publish --dry-run
 
       - name: Dispatch Tag Publish for Dart Core Package
-        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && (needs.release-please.outputs.dart_created == 'true' || inputs.target == 'dart' || inputs.target == 'all') }}
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ needs.release-please.outputs.dart_tag_name }}"
-          if [ -z "$TAG" ]; then
-            TAG="dart-v$(grep 'version:' packages/dart/sarvam/pubspec.yaml | head -n1 | awk '{print $2}')"
-          fi
+          TAG="dart-v$(grep 'version:' packages/dart/sarvam/pubspec.yaml | head -n1 | awk '{print $2}')"
           echo "Dispatching publish-dart.yml on tag $TAG..."
-          gh workflow run publish-dart.yml --ref "refs/tags/$TAG"
+          gh workflow run publish-dart.yml --ref "refs/tags/$TAG" || gh workflow run publish-dart.yml
 
       - name: Dispatch Tag Publish for Flutter Companion Audio Package
-        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && (needs.release-please.outputs.dart_audio_created == 'true') }}
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ needs.release-please.outputs.dart_audio_tag_name }}"
-          if [ -z "$TAG" ]; then
-            TAG="dart-audio-v$(grep 'version:' packages/dart/sarvam_flutter_audio/pubspec.yaml | head -n1 | awk '{print $2}')"
-          fi
+          TAG="dart-audio-v$(grep 'version:' packages/dart/sarvam_flutter_audio/pubspec.yaml | head -n1 | awk '{print $2}')"
           echo "Dispatching publish-dart.yml on tag $TAG..."
-          gh workflow run publish-dart.yml --ref "refs/tags/$TAG"
+          gh workflow run publish-dart.yml --ref "refs/tags/$TAG" || gh workflow run publish-dart.yml
 
   publish-maven:
     name: Publish Kotlin & Android Artifacts (Maven Central)
@@ -221,11 +223,15 @@ jobs:
           ./gradlew publishAllPublicationsToGitHubPackagesRepository --stacktrace || echo "Skipping GitHub Packages publish if unconfigured."
 
       - name: Live Publish to Maven Central Portal (Sonatype)
-        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && env.OSSRH_USERNAME != '' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
+          if [ -z "$OSSRH_USERNAME" ] || [ -z "$OSSRH_PASSWORD" ]; then
+            echo "OSSRH credentials not configured, skipping Sonatype publish."
+            exit 0
+          fi
           ROOT_DIR=$(pwd)
           cd packages/kotlin/build/staging-repo
           zip -r "$ROOT_DIR/packages/kotlin/build/bundle.zip" .
