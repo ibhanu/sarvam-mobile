@@ -113,12 +113,12 @@ jobs:
           cd ../react-native && npm publish --access public --provenance
 
   publish-dart:
-    name: Publish Dart & Flutter Packages (pub.dev)
+    name: Dispatch pub.dev Tag Publishing
     needs: release-please
-    timeout-minutes: 10
+    timeout-minutes: 5
     permissions:
+      actions: write
       contents: read
-      id-token: write
     if: |
       github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart') ||
       needs.release-please.outputs.dart_created == 'true' ||
@@ -148,19 +148,29 @@ jobs:
           flutter pub get
           flutter pub publish --dry-run
 
-      - name: Live Publish Dart Core Package (sarvam)
-        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+      - name: Dispatch Tag Publish for Dart Core Package
+        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && (needs.release-please.outputs.dart_created == 'true' || inputs.target == 'dart' || inputs.target == 'all') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd packages/dart/sarvam
-          dart pub get
-          dart pub publish --force
+          TAG="${{ needs.release-please.outputs.dart_tag_name }}"
+          if [ -z "$TAG" ]; then
+            TAG="dart-v$(grep 'version:' packages/dart/sarvam/pubspec.yaml | head -n1 | awk '{print $2}')"
+          fi
+          echo "Dispatching publish-dart.yml on tag $TAG..."
+          gh workflow run publish-dart.yml --ref "refs/tags/$TAG"
 
-      - name: Live Publish Flutter Companion Audio Package (sarvam_flutter_audio)
-        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
+      - name: Dispatch Tag Publish for Flutter Companion Audio Package
+        if: ${{ (github.event_name != 'workflow_dispatch' || !inputs.dry_run) && (needs.release-please.outputs.dart_audio_created == 'true') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd packages/dart/sarvam_flutter_audio
-          flutter pub get
-          flutter pub publish --force
+          TAG="${{ needs.release-please.outputs.dart_audio_tag_name }}"
+          if [ -z "$TAG" ]; then
+            TAG="dart-audio-v$(grep 'version:' packages/dart/sarvam_flutter_audio/pubspec.yaml | head -n1 | awk '{print $2}')"
+          fi
+          echo "Dispatching publish-dart.yml on tag $TAG..."
+          gh workflow run publish-dart.yml --ref "refs/tags/$TAG"
 
   publish-maven:
     name: Publish Kotlin & Android Artifacts (Maven Central)
