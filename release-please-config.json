@@ -1,15 +1,33 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "pull-request-title-pattern": "chore(release): release ${version}",
+  "group-pull-request-title-pattern": "chore(release): release mobile SDKs",
   "packages": {
+    "packages/rust-core": {
+      "release-type": "rust",
+      "package-name": "sarvam-rust-core",
+      "component": "rust-core",
+      "extra-files": [
+        "README.md"
+      ]
+    },
     "packages/kotlin": {
       "release-type": "maven",
       "package-name": "sarvam-core",
-      "component": "kotlin"
+      "component": "kotlin",
+      "extra-files": [
+        "packages/kotlin/README.md",
+        "README.md"
+      ]
     },
     "packages/swift": {
       "release-type": "simple",
       "package-name": "Sarvam",
-      "component": "swift"
+      "component": "swift",
+      "extra-files": [
+        "packages/swift/README.md",
+        "README.md"
+      ]
     },
     "packages/ts-core": {
       "release-type": "node",
@@ -24,12 +42,20 @@
     "packages/dart/sarvam": {
       "release-type": "dart",
       "package-name": "sarvam",
-      "component": "dart"
+      "component": "dart",
+      "extra-files": [
+        "packages/dart/sarvam/README.md",
+        "README.md"
+      ]
     },
     "packages/dart/sarvam_flutter_audio": {
       "release-type": "dart",
       "package-name": "sarvam_flutter_audio",
-      "component": "dart-audio"
+      "component": "dart-audio",
+      "extra-files": [
+        "packages/dart/sarvam_flutter_audio/README.md",
+        "README.md"
+      ]
     }
   }
 }

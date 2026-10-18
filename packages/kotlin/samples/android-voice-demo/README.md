@@ -67,8 +67,8 @@ android {
 
 dependencies {
     // Sarvam Mobile SDK
-    implementation("ai.sarvam:sarvam-core:0.1.0")
-    implementation("ai.sarvam:sarvam-android-audio:0.1.0")
+    implementation("io.github.ibhanu:sarvam-core:0.1.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.1.0")
 
     // Jetpack Compose BOM & Material 3
     val composeBom = platform("androidx.compose:compose-bom:2024.10.00")

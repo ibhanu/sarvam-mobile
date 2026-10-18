@@ -1,9 +1,16 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # @sarvam-mobile/react-native
 
 Official React Native & Expo SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and real-time conversational agents.
 
 [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Rust Core Engine](https://img.shields.io/badge/Rust%20Core-WebAssembly-DEA584.svg?logo=rust)](../rust-core)
 [![Hermes Ready](https://img.shields.io/badge/Hermes-100%25%20Compatible-brightgreen.svg)](https://reactnative.dev/docs/hermes)
 [![Expo Ready](https://img.shields.io/badge/Expo-SDK%2050%2B-black.svg)](https://expo.dev/)
 
@@ -375,6 +382,16 @@ Check out the fully functional sample application in [`example/App.tsx`](example
 - Translate-and-Speak screen with streaming TTS.
 - Voice activity meter.
 - Conversational turn-taking with `BargeInCoordinator`.
+
+---
+
+## 🦀 Shared Rust Core Integration (Hermes & WebAssembly)
+
+`@sarvam-mobile/react-native` inherits the shared native [`sarvam-rust-core`](../rust-core) engine via WebAssembly integration in `@sarvam-mobile/core`:
+
+- **Zero Hermes Degradation**: 16 kHz mono linear-16 PCM audio downsampling uses the SIMD-optimized Rust DSP resampler without requiring native C++ CocoaPods or Android Gradle native linking.
+- **Identical Mobile Resilience**: Token expiration, single-flight request coalescing, and exponential jitter backoff match the iOS Swift and Android Kotlin SDK implementations to the exact millisecond.
+- **Expo & Bare React Native**: Works seamlessly in Expo managed workflows, Bare React Native, and new architecture (Fabric/TurboModules) without native pod compilation steps.
 
 ---
 

@@ -48,4 +48,7 @@ export * from './resources/other.js';
 // Client
 export * from './client.js';
 
+// Shared Rust Core (WebAssembly) Bridge
+export * from './rust/rustCoreBridge.js';
+
 export const VERSION = '0.1.0';

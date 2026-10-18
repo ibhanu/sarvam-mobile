@@ -1,14 +1,21 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # sarvam_flutter_audio
 
 [![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Rust Core Compatible](https://img.shields.io/badge/Rust%20Core-Hardware%20DSP-DEA584.svg?logo=rust)](../../rust-core)
 [![Platforms: Flutter](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue)](https://flutter.dev)
 
 The official Flutter and Dart companion audio package for [Sarvam AI](https://sarvam.ai).
 
-Building real-time conversational voice assistants on mobile requires low-latency audio capture, strict audio format compliance, and instantaneous interruption (barge-in). `sarvam_flutter_audio` provides a production-grade, pure Dart audio pipeline engineered specifically for Sarvam's speech services:
+Building real-time conversational voice assistants on mobile requires low-latency audio capture, strict audio format compliance, and instantaneous interruption (barge-in). `sarvam_flutter_audio` provides a production-grade audio pipeline engineered specifically for Sarvam's speech services:
 
-- **Pure Dart PCM Resampling**: High-performance linear interpolation downsampler that converts incoming microphone audio (48 kHz, 44.1 kHz, mono/stereo, Int16 or Float32) into Sarvam's required **16 kHz mono `linear16` little-endian** format with zero external C/C++ compilation overhead.
+- **Dual-Engine Resampling**: High-performance pure Dart downsampler combined with native FFI hardware acceleration via [`sarvam-rust-core`](../../rust-core) that converts incoming microphone audio (48 kHz, 44.1 kHz, mono/stereo, Int16 or Float32) into Sarvam's required **16 kHz mono `linear16` little-endian** format.
 - **Bounded Backpressure Streamer**: Captures audio continuously and buffers frames in a bounded queue, safely dropping the oldest frames when network congestion occurs to prevent latency drift.
 - **Sub-20ms Conversational Barge-In**: The `BargeInCoordinator` listens for server-side Voice Activity Detection (`VadSpeechStart`) and instantly halts playback and flushes hardware buffers when the user starts speaking.
 - **Chunked Gapless Playback**: Plays streaming audio chunks from `client.textToSpeech.connect` and `client.textToSpeech.stream` as they arrive.
@@ -59,7 +66,7 @@ Add `sarvam` and `sarvam_flutter_audio` to your `pubspec.yaml`:
 ```yaml
 dependencies:
   sarvam: ^0.2.0
-  sarvam_flutter_audio: ^0.2.0
+  sarvam_flutter_audio: ^0.2.1
 ```
 
 ---

@@ -11,10 +11,10 @@ Add the official artifacts to your module's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Core API client (pure Kotlin JVM, coroutines, OkHttp, kotlinx.serialization)
-    implementation("ai.sarvam:sarvam-core:0.1.0")
+    implementation("io.github.ibhanu:sarvam-core:0.1.0")
 
     // Android audio companion (optional: microphone capture, 16kHz resampler, AudioTrack playback, Barge-in)
-    implementation("ai.sarvam:sarvam-android-audio:0.1.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.1.0")
 }
 ```
 

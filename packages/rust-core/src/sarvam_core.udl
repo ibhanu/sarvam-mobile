@@ -1,0 +1,5 @@
+namespace sarvam_rust_core {
+    string sarvam_version_json();
+    string sarvam_invoke_json(string command_json);
+    sequence<u8> sarvam_resample_pcm16(sequence<u8> input_bytes, u32 input_sample_rate, u16 channel_count);
+};

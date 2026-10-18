@@ -10,7 +10,7 @@ plugins {
 }
 
 allprojects {
-    group = (findProperty("GROUP") as? String) ?: "ai.sarvam"
+    group = (findProperty("GROUP") as? String) ?: "io.github.ibhanu"
     version = (findProperty("VERSION_NAME") as? String) ?: "0.1.0"
 }
 

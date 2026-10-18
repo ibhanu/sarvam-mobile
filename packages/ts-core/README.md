@@ -1,9 +1,16 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # @sarvam-mobile/core
 
 Official TypeScript Core SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and document intelligence services.
 
 [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Rust Core Engine](https://img.shields.io/badge/Rust%20Core-WebAssembly-DEA584.svg?logo=rust)](../rust-core)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](tsconfig.json)
 
@@ -398,6 +405,34 @@ const client = new SarvamClient({
   httpTransport: new FetchHttpTransport({ defaultTimeoutMs: 30000 }),
 });
 ```
+
+---
+
+## 🦀 Unified Rust Core Engine Integration (WebAssembly)
+
+`@sarvam-mobile/core` includes an optional zero-dependency WebAssembly bridge (`SarvamRustBridge`) compiled directly from [`packages/rust-core`](../rust-core) (`sarvam_rust_core.wasm`, **379 KB**).
+
+This enables Node.js, modern browsers, Edge runtimes, and Hermes to leverage the shared high-performance Rust engine:
+
+- **SIMD / Anti-aliased 16 kHz Audio Downsampling**: Converts microphone buffers (48 kHz, 44.1 kHz, mono/stereo) into compliant 16 kHz mono linear-16 PCM with bit-exact parity to the native iOS and Android audio engines.
+- **Canonical Retry Delay Evaluation**: Reuses the core exponential backoff and `Retry-After` calculation.
+- **Single-Flight Auth Token Coalescing**: Synchronizes proactive token refreshes with zero overhead.
+
+```typescript
+import { SarvamRustBridge } from '@sarvam-mobile/core';
+
+const bridge = new SarvamRustBridge();
+// Initialize WebAssembly runtime (or pass custom wasm buffer in offline environments)
+await bridge.init();
+
+// Calculate exact retry delay using Rust core matrix
+const retryDelayMs = bridge.computeRetryDelay(2, 429, 5);
+
+// Resample 48kHz audio to 16kHz mono linear-16 PCM
+const pcm16k = bridge.resampleAudio(microphonePcmBytes, 48000, 1);
+```
+
+*(If WebAssembly is unavailable in a constrained environment, `@sarvam-mobile/core` automatically falls back to its built-in pure TypeScript audio and retry implementations without crashing).*
 
 ---
 

@@ -1,7 +1,7 @@
 # Sarvam AI Mobile SDKs — Cross-Platform Architecture & API Contract
 
 > **Status:** Authoritative Specification (Phase 0.1)  
-> **Applies to:** Android (`ai.sarvam:sarvam-core`), iOS (`Sarvam`), TypeScript/React Native (`@sarvam/core`, `@sarvam/react-native`), Flutter/Dart (`sarvam`)  
+> **Applies to:** Android (`io.github.ibhanu:sarvam-core`), iOS (`Sarvam`), TypeScript/React Native (`@sarvam/core`, `@sarvam/react-native`), Flutter/Dart (`sarvam`)  
 > **Companion Skill:** [`.agents/skills/sdk-development/SKILL.md`](../../.agents/skills/sdk-development/SKILL.md)
 
 ---

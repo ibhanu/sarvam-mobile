@@ -1,7 +1,14 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # Sarvam AI Swift SDK (`Sarvam` & `SarvamAudio`)
 
 [![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://swift.org)
 [![Platforms](https://img.shields.io/badge/Platforms-iOS%2015.0+%20|%20macOS%2012.0+-blue.svg)](https://developer.apple.com)
+[![Rust Core C-FFI](https://img.shields.io/badge/Rust%20Core-C--FFI-DEA584.svg?logo=rust)](../rust-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Official Swift SDK and Audio Companion for [Sarvam AI](https://sarvam.ai) — the leading foundation model platform for Indian languages. Built from the ground up in idiomatic Swift 6 with strict concurrency (`Sendable`), native `async/await`, `AsyncThrowingStream`, and production-grade network resilience.
@@ -16,7 +23,7 @@ Add the dependency in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.1")
 ],
 targets: [
     .target(
@@ -251,6 +258,32 @@ print("Results ready at: \(download.downloadUrl)")
 - **Rate-Limit Awareness**: Automatically reads `Retry-After` headers (supporting both integer seconds and millisecond values).
 - **Job Creation Safety**: Non-idempotent job creations (Doc AI, Dubbing, Bulk STT) are never blindly retried on server 500s to prevent duplicate billing.
 - **Privacy Manifest (`PrivacyInfo.xcprivacy`)**: Pre-configured in both SPM modules declaring zero tracking domains and required reason APIs for frictionless App Store validation.
+
+---
+
+## 🦀 Unified Rust Core Engine (C-FFI)
+
+The Swift SDK binds directly to [`sarvam-rust-core`](../rust-core) via `SarvamRustBridge`, leveraging Clang C-interop without bridging headers:
+
+- **SIMD DSP Audio Downsampling**: Hardware microphone audio recorded via `AVAudioEngine` (at native 48 kHz / 44.1 kHz) is resampled into 16 kHz mono linear-16 PCM using Rust SIMD instructions.
+- **Single-Flight Refresh & Token Caching**: Deduplicates concurrent async tasks requesting new access tokens.
+- **Deterministic Retry Matrix**: Computes exact exponential jitter curves matching all client platforms.
+
+```swift
+import Sarvam
+
+let bridge = SarvamRustBridge.shared
+
+// 1. Resample raw audio buffers to 16 kHz mono linear-16 PCM
+let resampled = bridge.resampleAudio(
+    inputPcm: rawPcmData,
+    sourceSampleRate: 48000,
+    channels: 1
+)
+
+// 2. Compute canonical retry delay (attempt 2, HTTP 429 with 3s Retry-After)
+let delayMs = bridge.computeRetryDelay(attempt: 2, statusCode: 429, retryAfterSeconds: 3)
+```
 
 ---
 

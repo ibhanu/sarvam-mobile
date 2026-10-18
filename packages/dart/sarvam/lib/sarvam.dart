@@ -48,6 +48,7 @@ export 'src/resources/speech_to_text_resource.dart';
 export 'src/resources/text_resource.dart';
 export 'src/resources/text_to_speech_resource.dart';
 export 'src/resources/voice_cloning_resource.dart';
+export 'src/rust/sarvam_rust_bridge.dart';
 
 /// Current version of the Sarvam Dart SDK.
 const String sarvamSdkVersion = '0.1.0';

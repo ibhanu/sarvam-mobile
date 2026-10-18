@@ -79,6 +79,9 @@ pubspec.lock
 .flutter-plugins-dependencies
 doc/api/
 
+# Rust & Cargo
+packages/rust-core/target/
+
 # Miscellaneous
 tmp/
 temp/

@@ -1,32 +1,45 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # Sarvam AI Mobile SDKs
 
 [![CI](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/ibhanu/sarvam-mobile/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ibhanu/sarvam-mobile/branch/main/graph/badge.svg)](https://codecov.io/gh/ibhanu/sarvam-mobile)
 [![Coverage](https://img.shields.io/badge/Coverage-97.8%25-brightgreen.svg)](#-code-coverage)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Release Please](https://img.shields.io/badge/Release-Please-orange.svg)](https://github.com/googleapis/release-please)
+[![Rust Core](https://img.shields.io/badge/Rust%20Core-0.2.0-DEA584.svg?logo=rust)](packages/rust-core)
+[![Release Please](https://img.shields.io/badge/release--please-automated-orange.svg?logo=github)](https://github.com/googleapis/release-please)
 [![npm @sarvam-mobile/core](https://img.shields.io/npm/v/@sarvam-mobile/core.svg?label=npm%20%40sarvam-mobile%2Fcore)](https://www.npmjs.com/package/@sarvam-mobile/core)
 [![npm @sarvam-mobile/react-native](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg?label=npm%20%40sarvam-mobile%2Freact-native)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
 [![pub.dev sarvam](https://img.shields.io/pub/v/sarvam.svg?label=pub.dev%20sarvam)](https://pub.dev/packages/sarvam)
 [![pub.dev sarvam_flutter_audio](https://img.shields.io/pub/v/sarvam_flutter_audio.svg?label=pub.dev%20sarvam_flutter_audio)](https://pub.dev/packages/sarvam_flutter_audio)
-[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg?label=maven%20io.github.ibhanu%3Asarvam-core)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
 
 ## 📌 About
 
-**Sarvam Mobile** provides the official, production-ready mobile client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech, translation, and language APIs[cite: 1]. 
+**Sarvam Mobile** provides the official, production-ready mobile client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech, translation, and language APIs.
 
-Designed from the ground up to support modern mobile client architectures across **Android (Kotlin)**, **iOS (Swift)**, **React Native**, and **Flutter (Dart)**, the monorepo separates core network communication from platform hardware[cite: 1]:
+Designed from the ground up to support modern mobile client architectures across **Android (Kotlin)**, **iOS (Swift)**, **React Native**, and **Flutter (Dart)**, the monorepo pairs native platform ergonomics with a high-performance **Unified Rust Engine** (`sarvam-rust-core`):
 
-- **Decoupled Architecture**: Core client packages contain zero hardware or OS audio framework dependencies, making them lightweight, headless, and strictly cross-platform[cite: 1].
-- **Companion Audio Engines**: Dedicated companion packages handle low-latency hardware audio capture, 16 kHz PCM conversion, and streaming playback per platform[cite: 1].
-- **Mobile-First Security**: Built-in credential layers featuring `TokenAuth` (single-flight request coalescing, proactive refresh) and `ProxyAuth` to keep production API keys off the client binary[cite: 1].
-- **Indic Language Pipeline**: First-class streaming and REST interfaces for translation, speech-to-text, text-to-speech, and dubbing pipelines across 11+ Indian languages[cite: 1].
+- **Unified Rust Core Engine**: Critical auth caching, single-flight refresh coalescing, exponential jitter retry matrices, SSE parsing, and 16 kHz mono linear-16 PCM DSP audio resampling are powered by a single, memory-safe, ultra-compact (<600 KB) Rust library (`sarvam-rust-core`).
+- **Host-Delegated Transport**: Networking and WebSocket I/O are handled by native platform engines (`OkHttp`, `URLSession`, `fetch`, `package:http`), guaranteeing 100% compliance with OS VPN configurations, enterprise proxies, cellular network transitions, and SSL certificate pinning.
+- **Companion Audio Engines**: Dedicated companion packages handle low-latency hardware microphone capture, 16 kHz PCM conversion, and real-time streaming audio playback.
+- **Mobile-First Security**: Built-in credential layers featuring `TokenAuth` (single-flight request coalescing, proactive refresh) and `ProxyAuth` to keep production API keys off the client binary.
+- **Indic Language Pipeline**: First-class streaming and REST interfaces for translation, speech-to-text, text-to-speech, and dubbing pipelines across 11+ Indian languages.
 
 ---
 
 ## 🏛️ Architecture Overview
 
-The Sarvam Mobile monorepo adheres strictly to **Clean Architecture**, **SOLID principles**, and **Separation of Concerns**. Core networking packages manage stateless API interactions, WebSocket streaming, resilient exponential backoff, and authentication token lifecycles with **zero hardware or audio framework dependencies**. Companion audio packages provide optional, platform-native microphone sampling, 16 kHz PCM conversion, and low-latency audio playback.
+The Sarvam Mobile monorepo adheres strictly to **Clean Architecture**, **SOLID principles**, and **Separation of Concerns**. A shared core Rust engine coordinates stateful and computationally intensive logic across all targets via zero-overhead bindings:
+- **Android / JVM**: Direct JNI native bindings (`System.loadLibrary("sarvam_rust_core")`)
+- **iOS / macOS**: Direct C-FFI / Clang ABI linking (`libsarvam_rust_core.a` / `.dylib`)
+- **Flutter / Dart**: Native Dynamic Library via `dart:ffi`
+- **TypeScript / React Native**: Deterministic WebAssembly module (`sarvam_rust_core.wasm`)
 
 ```mermaid
 flowchart TD
@@ -37,25 +50,23 @@ flowchart TD
         AppFlutter["Flutter App (Dart)"]
     end
 
+    subgraph PlatformSDKs["Platform SDK Layers (Host-Delegated Networking)"]
+        CoreKotlin["io.github.ibhanu:sarvam-core<br/>(OkHttp / Coroutines)"]
+        CoreSwift["Sarvam (SwiftPM)<br/>(URLSession / Swift 6 Concurrency)"]
+        CoreRN["@sarvam-mobile/react-native<br/>(Hermes Native WS / Fetch)"]
+        CoreTS["@sarvam-mobile/core<br/>(Zero-dep Fetch / AsyncIterable)"]
+        CoreDart["sarvam<br/>(package:http / Dart Streams)"]
+    end
+
+    subgraph RustCore["Unified Native Rust Engine (sarvam-rust-core <600 KB)"]
+        SharedRust["sarvam-rust-core<br/>• Proactive Token Refresh & Single-Flight Coalescing<br/>• High-Throughput 16kHz PCM Audio Resampler (DSP)<br/>• Exponential Jitter Backoff & Retry Matrix<br/>• SSE / WebSocket Event State Machines"]
+    end
+
     subgraph CompanionAudio["Hardware Audio Layer (Optional Companion Packages)"]
-        AudioKotlin["ai.sarvam:sarvam-android-audio<br/>(AudioRecord, 16kHz PCM, AudioTrack)"]
-        AudioSwift["SarvamAudio<br/>(AVAudioEngine, 16kHz PCM, AudioQueue)"]
+        AudioKotlin["io.github.ibhanu:sarvam-android-audio<br/>(AudioRecord, AudioTrack)"]
+        AudioSwift["SarvamAudio<br/>(AVAudioEngine, AudioQueue)"]
         AudioRN["@sarvam-mobile/react-native-audio<br/>(Nitro Modules, C++ JSI)"]
         AudioFlutter["sarvam_flutter_audio<br/>(Record, AudioPlayers)"]
-    end
-
-    subgraph CoreLayer["Core Networking SDKs (Zero Hardware Dependencies)"]
-        CoreKotlin["ai.sarvam:sarvam-core"]
-        CoreSwift["Sarvam (SwiftPM)"]
-        CoreRN["@sarvam-mobile/react-native"]
-        CoreTS["@sarvam-mobile/core (Zero Deps)"]
-        CoreDart["sarvam (Dart/Flutter)"]
-    end
-
-    subgraph AuthSecurity["Security & Credential Layer"]
-        TokenAuth["TokenAuth<br/>(Proactive refresh, single-flight dedupe)"]
-        ProxyAuth["ProxyAuth<br/>(Backend-For-Frontend BFF)"]
-        ApiKeyAuth["ApiKeyAuth<br/>(Dev only, release build warning)"]
     end
 
     subgraph SarvamBackend["Sarvam AI Cloud Platform"]
@@ -74,14 +85,20 @@ flowchart TD
     AppFlutter --> CoreDart
 
     CoreRN --> CoreTS
-    CoreKotlin --> AuthSecurity
-    CoreSwift --> AuthSecurity
-    CoreTS --> AuthSecurity
-    CoreDart --> AuthSecurity
 
-    AuthSecurity --> ApiBase
-    AuthSecurity --> WsBase
-    AuthSecurity --> DubbingBase
+    CoreKotlin -.->|JNI Native Call| SharedRust
+    CoreSwift -.->|C-FFI Clang ABI| SharedRust
+    CoreDart -.->|dart:ffi| SharedRust
+    CoreTS -.->|WebAssembly Wasm| SharedRust
+
+    CoreKotlin --> ApiBase
+    CoreKotlin --> WsBase
+    CoreSwift --> ApiBase
+    CoreSwift --> WsBase
+    CoreTS --> ApiBase
+    CoreTS --> WsBase
+    CoreDart --> ApiBase
+    CoreDart --> WsBase
 ```
 
 ---
@@ -90,14 +107,15 @@ flowchart TD
 
 | Platform / Ecosystem | Package Identifier | Registry / Distribution | Directory | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Flutter / Dart** | `sarvam` | [![pub package](https://img.shields.io/pub/v/sarvam.svg)](https://pub.dev/packages/sarvam) | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client (Sound Null Safety, Streams, http) |
+| **Shared Rust Core** | `sarvam-rust-core` | [![crates.io](https://img.shields.io/badge/crates.io-0.2.0-orange.svg)](packages/rust-core) | [`packages/rust-core`](packages/rust-core) | Shared high-performance engine (Auth, 16kHz DSP resampler, SSE, Retry) |
+| **Flutter / Dart** | `sarvam` | [![pub package](https://img.shields.io/pub/v/sarvam.svg)](https://pub.dev/packages/sarvam) | [`packages/dart/sarvam`](packages/dart/sarvam) | Core Dart client with FFI Rust bridge & pure Dart fallback |
 | **Flutter / Dart** | `sarvam_flutter_audio` | [![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio) | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
-| **TypeScript / Web** | `@sarvam-mobile/core` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core) | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK (Fetch, WS, AsyncIterable) |
-| **React Native** | `@sarvam-mobile/react-native` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native) | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization |
-| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-v0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package (Swift 6 concurrency, URLSession, SSE) |
-| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-v0.2.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
-| **Android / Kotlin** | `ai.sarvam:sarvam-core` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client (Ktor/OkHttp, Coroutines, Serialization) |
-| **Android / Kotlin** | `ai.sarvam:sarvam-android-audio` | [![Maven Central](https://img.shields.io/badge/Maven-v0.2.0-blue.svg)](packages/kotlin/build/staging-repo) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
+| **TypeScript / Web** | `@sarvam-mobile/core` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core) | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK with Wasm core bridge |
+| **React Native** | `@sarvam-mobile/react-native` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native) | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization & Wasm bridge |
+| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package with C-FFI Rust core bridge |
+| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.2.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
+| **Android / Kotlin** | `io.github.ibhanu:sarvam-core` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client with JNI Rust core bridge |
+| **Android / Kotlin** | `io.github.ibhanu:sarvam-android-audio` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-android-audio.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-android-audio) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
 
 ---
 
@@ -156,8 +174,8 @@ Both `Sarvam` and `SarvamAudio` include bundled Apple Privacy Manifests (`Privac
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("ai.sarvam:sarvam-core:0.2.0")
-    implementation("ai.sarvam:sarvam-android-audio:0.2.0") // Optional
+    implementation("io.github.ibhanu:sarvam-core:0.1.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.1.0") // Optional
 }
 
 // Instantiate client with TokenAuth
@@ -182,7 +200,7 @@ println(translation.translatedText)
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.2.1")
 ]
 
 import Sarvam
@@ -229,8 +247,8 @@ console.log(response.translatedText);
 ```yaml
 # pubspec.yaml
 dependencies:
-  sarvam: ^0.2.0
-  sarvam_flutter_audio: ^0.2.0 # Optional
+  sarvam: ^0.3.0
+  sarvam_flutter_audio: ^0.2.1 # Optional
 ```
 ```dart
 import 'package:sarvam/sarvam.dart';

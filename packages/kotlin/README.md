@@ -1,7 +1,14 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # Sarvam AI Kotlin & Android SDK
 
-[![Maven Central](https://img.shields.io/maven-central/v/ai.sarvam/sarvam-core.svg)](https://central.sonatype.com/artifact/ai.sarvam/sarvam-core)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Rust Core JNI](https://img.shields.io/badge/Rust%20Core-JNI-DEA584.svg?logo=rust)](../rust-core)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-purple.svg)](https://kotlinlang.org)
 [![Android Min SDK](https://img.shields.io/badge/Android%20Min%20SDK-21+-green.svg)](https://developer.android.com)
 
@@ -18,14 +25,14 @@ Add the core client and optional audio hardware companion to your `build.gradle.
 ```kotlin
 dependencies {
     // Core API client (pure Kotlin JVM, coroutines, OkHttp, kotlinx.serialization)
-    implementation("ai.sarvam:sarvam-core:0.1.0")
+    implementation("io.github.ibhanu:sarvam-core:0.1.0")
 
     // Android hardware audio companion (AudioRecord, AudioTrack, 16kHz resampler, Barge-in)
-    implementation("ai.sarvam:sarvam-android-audio:0.1.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.1.0")
 }
 ```
 
-*(Using Groovy `build.gradle`? Use `implementation 'ai.sarvam:sarvam-core:0.1.0'` and `implementation 'ai.sarvam:sarvam-android-audio:0.1.0'`)*
+*(Using Groovy `build.gradle`? Use `implementation 'io.github.ibhanu:sarvam-core:0.1.0'` and `implementation 'io.github.ibhanu:sarvam-android-audio:0.1.0'`)*
 
 ### 2. Make Your First Call
 
@@ -252,7 +259,7 @@ sttSession.sendAudio(pcm16Chunk)
 
 ### 4. Android Hardware Audio & Sub-20ms Barge-In
 
-The companion package `ai.sarvam:sarvam-android-audio` integrates microphone capture, resamplers, AudioTrack playback, and interrupt handling:
+The companion package `io.github.ibhanu:sarvam-android-audio` integrates microphone capture, resamplers, AudioTrack playback, and interrupt handling:
 
 ```kotlin
 import ai.sarvam.audio.AndroidAudioRecordCaptureDriver
@@ -392,13 +399,42 @@ val client = SarvamClient.builder()
 
 ## 📦 Architecture & Packages
 
-| Package | Artifact | Description |
-| :--- | :--- | :--- |
-| **`sarvam-core`** | `ai.sarvam:sarvam-core` | Pure Kotlin JVM library containing REST clients, SSE streaming, WebSocket sessions, and Auth/Retry middlewares. |
-| **`sarvam-android-audio`** | `ai.sarvam:sarvam-android-audio` | Android companion library containing `AudioRecord` capture, `AudioTrack` playback, 16kHz `PcmResampler`, RMS visualizer calculations, and `BargeInCoordinator`. |
+| Package | Artifact | Maven Central | Description |
+| :--- | :--- | :--- | :--- |
+| **`sarvam-core`** | `io.github.ibhanu:sarvam-core` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core) | Pure Kotlin JVM library containing REST clients, SSE streaming, WebSocket sessions, and Auth/Retry middlewares. |
+| **`sarvam-android-audio`** | `io.github.ibhanu:sarvam-android-audio` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-android-audio.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-android-audio) | Android companion library containing `AudioRecord` capture, `AudioTrack` playback, 16kHz `PcmResampler`, RMS visualizer calculations, and `BargeInCoordinator`. |
 
 ### R8 / ProGuard
 Rules are automatically packaged in the library AAR/JAR via `consumer-rules.pro`. No additional configuration is required in consumer apps.
+
+---
+
+## 🦀 Unified Rust Core Engine (Direct JNI)
+
+`io.github.ibhanu:sarvam-core` integrates with [`packages/rust-core`](../rust-core) via direct JNI exports (`SarvamRustBridge`):
+
+- **Direct JNI without JNA Overhead**: Zero third-party runtime dependencies. Uses direct native JVM symbol resolution (`Java_ai_sarvam_rust_SarvamRustBridge_*`).
+- **SIMD DSP Audio Downsampling**: Transforms high-rate microphone audio (`AudioRecord` at 44.1 kHz or 48 kHz) into 16 kHz mono linear-16 PCM with bit-exact parity across all platforms.
+- **Single-Flight Token Synchronization**: Lock-free proactive refresh coordination with atomic state management.
+- **Graceful Pure-Kotlin Fallback**: If the native shared library (`libsarvam_rust_core.so`) is absent, `SarvamRustBridge` falls back to pure Kotlin JVM routines seamlessly.
+
+```kotlin
+import ai.sarvam.rust.SarvamRustBridge
+
+// 1. Resample raw microphone PCM buffer to 16 kHz mono linear-16 PCM
+val pcm16k = SarvamRustBridge.resampleAudio(
+    inputPcm = microphoneBytes,
+    sourceSampleRate = 48000,
+    channels = 1
+)
+
+// 2. Compute canonical retry delay (attempt 2, HTTP 429 with 3s Retry-After)
+val delayMs = SarvamRustBridge.computeRetryDelay(
+    attempt = 2,
+    statusCode = 429,
+    retryAfterSeconds = 3
+)
+```
 
 ---
 

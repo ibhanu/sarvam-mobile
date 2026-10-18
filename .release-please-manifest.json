@@ -1,4 +1,5 @@
 {
+  "packages/rust-core": "0.2.0",
   "packages/kotlin": "0.1.0",
   "packages/swift": "0.2.1",
   "packages/ts-core": "0.3.0",

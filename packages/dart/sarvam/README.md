@@ -1,7 +1,14 @@
+<p align="center">
+  <a href="https://sarvam.ai">
+    <img src="https://assets.sarvam.ai/tr:q-70,f-auto,dpr-auto/assets/og-images/home-og.png" alt="Sarvam AI - India's Sovereign AI Platform" width="100%" style="border-radius: 12px; max-width: 800px;" />
+  </a>
+</p>
+
 # sarvam
 
 [![pub package](https://img.shields.io/pub/v/sarvam.svg)](https://pub.dev/packages/sarvam)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Rust Core FFI](https://img.shields.io/badge/Rust%20Core-dart%3Affi-DEA584.svg?logo=rust)](../../rust-core)
 [![Platforms: Flutter & Dart](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue)](https://pub.dev/packages/sarvam)
 
 The official Dart and Flutter client SDK for [Sarvam AI](https://sarvam.ai)'s Indic language models, speech recognition (STT), speech synthesis (TTS), text translation, transliteration, and conversational AI.
@@ -395,6 +402,37 @@ try {
 } on SarvamException catch (e) {
   print('Generic Sarvam error: ${e.message}');
 }
+```
+
+---
+
+## 🦀 Unified Rust Core Engine (`dart:ffi`)
+
+The `sarvam` package integrates with [`packages/rust-core`](../../rust-core) via `dart:ffi` (`SarvamRustBridge`):
+
+- **Zero-Copy Native Audio Downsampling**: Hardware microphone buffers are downsampled to 16 kHz mono linear-16 PCM via SIMD-optimized Rust DSP algorithms (`libsarvam_rust_core.so` on Android/Linux, `libsarvam_rust_core.dylib` on macOS/iOS).
+- **Synchronized Exponential Jitter Backoff**: Exactly mirrors the canonical retry curves of the cloud platform and native sister SDKs.
+- **Graceful Web & Pure-Dart Fallback**: When running on Flutter Web or constrained environments where dynamic C libraries cannot be loaded, `SarvamRustBridge` automatically and silently falls back to pure Dart resampling and backoff math with zero runtime exceptions.
+
+```dart
+import 'dart:typed_data';
+import 'package:sarvam/src/rust/sarvam_rust_bridge.dart';
+
+final bridge = SarvamRustBridge.instance;
+
+// 1. Resample 48 kHz microphone stream to 16 kHz mono linear-16 PCM
+final Uint8List resampledPcm = bridge.resampleAudio(
+  rawMicrophoneBytes,
+  sourceSampleRate: 48000,
+  channels: 1,
+);
+
+// 2. Evaluate retry backoff with full jitter
+final int delayMs = bridge.computeRetryDelay(
+  attempt: 2,
+  statusCode: 429,
+  retryAfterSeconds: 3,
+);
 ```
 
 ---

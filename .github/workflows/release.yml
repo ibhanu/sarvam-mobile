@@ -21,6 +21,7 @@ on:
           - maven
           - dart
           - swift
+          - rust
 
 permissions:
   contents: write
@@ -39,6 +40,9 @@ jobs:
     timeout-minutes: 10
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
+      rust_core_created: ${{ steps.release.outputs['packages/rust-core--release_created'] }}
+      rust_core_version: ${{ steps.release.outputs['packages/rust-core--version'] }}
+      rust_core_tag: ${{ steps.release.outputs['packages/rust-core--tag_name'] }}
       ts_core_created: ${{ steps.release.outputs['packages/ts-core--release_created'] }}
       ts_core_version: ${{ steps.release.outputs['packages/ts-core--version'] }}
       ts_core_tag: ${{ steps.release.outputs['packages/ts-core--tag_name'] }}
@@ -61,6 +65,7 @@ jobs:
         uses: googleapis/release-please-action@v5
         id: release
         with:
+          target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
@@ -271,3 +276,26 @@ jobs:
             echo "ERROR: .spi.yml missing!"
             exit 1
           fi
+
+  package-rust:
+    name: Package & Verify Rust Core (sarvam-rust-core)
+    needs: release-please
+    timeout-minutes: 10
+    if: |
+      github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'rust') ||
+      needs.release-please.outputs.rust_core_created == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Build and Package Crate
+        run: |
+          ./scripts/build-rust-core.sh
+          cd packages/rust-core
+          cargo package --allow-dirty
