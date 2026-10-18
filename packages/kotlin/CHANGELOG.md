@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0](https://github.com/ibhanu/sarvam-mobile/compare/kotlin-v0.1.0...kotlin-v0.2.0) (2026-10-18)
+
+
+### Features
+
+* **core:** implement unified cross-platform Rust core engine and automated release pipeline ([7a450ea](https://github.com/ibhanu/sarvam-mobile/commit/7a450ea5185b7be44984d15f7d5ad2610b6de8a2))
+* initial commit of Sarvam Mobile SDKs monorepo ([8114f80](https://github.com/ibhanu/sarvam-mobile/commit/8114f80d555332f8fca3f3c84cd720543b42746c))
+* **release:** configure multi-registry publishing, licenses, and GitHub Actions release pipeline ([3ab9d6b](https://github.com/ibhanu/sarvam-mobile/commit/3ab9d6bf3e1bcc39ce127d8c2a47298744adae7e))
+
+
+### Bug Fixes
+
+* **kotlin:** use wall-clock dispatcher timeout for asynchronous capture termination in test ([449123a](https://github.com/ibhanu/sarvam-mobile/commit/449123aaf6ef3a16005da2dc2e899f4337eee2a9))
+* **release:** add Rust build to publish-swift and make bridge version assertions resilient to version bumps ([2569b26](https://github.com/ibhanu/sarvam-mobile/commit/2569b26d8d8b5f76b17d5386020778042600e4da))
+* update CI Flutter action, upgrade Gradle wrapper, and resolve mic streamer concurrency race ([c23af7d](https://github.com/ibhanu/sarvam-mobile/commit/c23af7d3c1138dbbc93f6462bf3584d2844eb0cb))
+* update repository and issue tracker URLs to ibhanu/sarvam-mobile and bump dart SDKs to 0.2.1 ([a2c1ab1](https://github.com/ibhanu/sarvam-mobile/commit/a2c1ab1f354719724e02c629f34a3a4f1efb7646))
+
 ## [0.1.0] - 2026-10-16
 
 ### Added
