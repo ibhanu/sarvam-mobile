@@ -12,7 +12,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-purple.svg)](https://kotlinlang.org)
 [![Android Min SDK](https://img.shields.io/badge/Android%20Min%20SDK-21+-green.svg)](https://developer.android.com)
 
-Official, production-grade Kotlin & Android client SDK for [Sarvam AI](https://sarvam.ai) — India's foundational AI platform. Designed for high performance, sub-20ms voice barge-in, sound nullability, structured concurrency with Kotlin Coroutines & Flow, and zero-leak mobile security.
+Unofficial, production-grade Kotlin & Android client SDK for [Sarvam AI](https://sarvam.ai) — India's foundational AI platform. Designed for high performance, sub-20ms voice barge-in, sound nullability, structured concurrency with Kotlin Coroutines & Flow, and zero-leak mobile security.
 
 ---
 

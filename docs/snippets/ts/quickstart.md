@@ -1,6 +1,6 @@
 # TypeScript & React Native Quickstart Guide
 
-This guide walks you through installing, configuring, and building applications with the official **Sarvam AI TypeScript SDKs**:
+This guide walks you through installing, configuring, and building applications with the unofficial **Sarvam AI TypeScript SDKs**:
 - **`@sarvam/core`**: Pure TypeScript core SDK with zero dependencies for Node.js 18+, browser, edge runtimes, and Cloudflare Workers.
 - **`@sarvam/react-native`**: Hermes-native mobile SDK with native WebSocket header forwarding, zero-copy file uploads (`fromReactNativeUri`), and conversational audio utilities (`PcmResampler`, `BargeInCoordinator`).
 

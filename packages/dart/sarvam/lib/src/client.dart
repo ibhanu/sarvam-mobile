@@ -68,7 +68,7 @@ class SarvamClientConfig {
             ];
 }
 
-/// Official client for interacting with Sarvam AI services.
+/// Client for interacting with Sarvam AI services.
 ///
 /// Exposes resources:
 /// - [text]: Text translation, transliteration, and language identification.

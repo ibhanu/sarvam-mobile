@@ -37,7 +37,7 @@ public struct SarvamEnvironment: Sendable, Equatable, Hashable {
         }
     }
 
-    /// Official Sarvam AI production environment.
+    /// Default Sarvam AI production environment.
     public static let production = SarvamEnvironment(
         apiBaseUrl: SarvamSpecMetadata.defaultApiBaseUrl,
         dubbingBaseUrl: SarvamSpecMetadata.defaultDubbingBaseUrl,

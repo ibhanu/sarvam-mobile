@@ -6,7 +6,7 @@
 
 # @sarvam-mobile/core
 
-Official TypeScript Core SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and document intelligence services.
+Unofficial TypeScript Core SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and document intelligence services.
 
 [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

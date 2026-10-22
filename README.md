@@ -21,7 +21,10 @@
 
 ## 📌 About
 
-**Sarvam Mobile** provides the official, production-ready mobile client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech, translation, and language APIs.
+**Sarvam Mobile** provides unofficial, community-driven, production-ready mobile client SDKs for [Sarvam AI](https://sarvam.ai)'s Indic-first speech, translation, and language APIs.
+
+> [!NOTE]
+> This is an independent, community-driven open-source project and is not affiliated with, sponsored, or endorsed by Sarvam AI.
 
 Designed from the ground up to support modern mobile client architectures across **Android (Kotlin)**, **iOS (Swift)**, **React Native**, and **Flutter (Dart)**, the monorepo pairs native platform ergonomics with a high-performance **Unified Rust Engine** (`sarvam-rust-core`):
 

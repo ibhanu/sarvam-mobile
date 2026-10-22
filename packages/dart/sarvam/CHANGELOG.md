@@ -73,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-10-16
 
 ### Added
-- Initial release of the official Sarvam AI client SDK for Dart and Flutter (`sarvam`).
+- Initial release of the unofficial Sarvam AI client SDK for Dart and Flutter (`sarvam`).
 - **Text & Language Resource (`client.text`)**:
   - `translate`: High-accuracy neural translation supporting 22+ Indic languages and English.
   - `transliterate`: Script transliteration between Indic scripts and Latin representations.

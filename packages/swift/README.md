@@ -11,7 +11,7 @@
 [![Rust Core C-FFI](https://img.shields.io/badge/Rust%20Core-C--FFI-DEA584.svg?logo=rust)](../rust-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Official Swift SDK and Audio Companion for [Sarvam AI](https://sarvam.ai) — the leading foundation model platform for Indian languages. Built from the ground up in idiomatic Swift 6 with strict concurrency (`Sendable`), native `async/await`, `AsyncThrowingStream`, and production-grade network resilience.
+Unofficial Swift SDK and Audio Companion for [Sarvam AI](https://sarvam.ai) — the leading foundation model platform for Indian languages. Built from the ground up in idiomatic Swift 6 with strict concurrency (`Sendable`), native `async/await`, `AsyncThrowingStream`, and production-grade network resilience.
 
 ---
 

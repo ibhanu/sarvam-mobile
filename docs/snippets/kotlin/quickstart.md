@@ -6,7 +6,7 @@ Comprehensive, production-ready Kotlin code snippets for integrating Sarvam AI i
 
 ## 1. Gradle Installation
 
-Add the official artifacts to your module's `build.gradle.kts`:
+Add the artifacts to your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {

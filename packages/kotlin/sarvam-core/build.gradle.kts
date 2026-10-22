@@ -23,7 +23,7 @@ publishing {
 
             pom {
                 name.set("sarvam-core")
-                description.set("Official Kotlin/Android Core SDK for Sarvam AI Indic language models and speech services")
+                description.set("Unofficial Kotlin/Android Core SDK for Sarvam AI Indic language models and speech services")
                 url.set("https://github.com/ibhanu/sarvam-mobile")
                 inceptionYear.set("2026")
                 licenses {

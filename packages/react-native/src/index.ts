@@ -1,6 +1,6 @@
 /**
  * @sarvam/react-native
- * Official React Native SDK for Sarvam AI Indic language models and speech services.
+ * Unofficial React Native SDK for Sarvam AI Indic language models and speech services.
  */
 
 export * from '@sarvam-mobile/core';

@@ -6,7 +6,7 @@
 
 # @sarvam-mobile/react-native
 
-Official React Native & Expo SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and real-time conversational agents.
+Unofficial React Native & Expo SDK for **Sarvam AI** Indic language models, speech recognition, speech synthesis, and real-time conversational agents.
 
 [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

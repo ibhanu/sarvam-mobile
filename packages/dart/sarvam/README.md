@@ -11,7 +11,7 @@
 [![Rust Core FFI](https://img.shields.io/badge/Rust%20Core-dart%3Affi-DEA584.svg?logo=rust)](../../rust-core)
 [![Platforms: Flutter & Dart](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue)](https://pub.dev/packages/sarvam)
 
-The official Dart and Flutter client SDK for [Sarvam AI](https://sarvam.ai)'s Indic language models, speech recognition (STT), speech synthesis (TTS), text translation, transliteration, and conversational AI.
+The unofficial Dart and Flutter client SDK for [Sarvam AI](https://sarvam.ai)'s Indic language models, speech recognition (STT), speech synthesis (TTS), text translation, transliteration, and conversational AI.
 
 Designed from the ground up for high-performance mobile and cross-platform applications:
 - **Pure Dart Core**: Zero `dart:io` runtime dependencies in the core pipeline — works seamlessly on **Flutter Web**, iOS, Android, macOS, Windows, Linux, and server-side Dart runtimes.

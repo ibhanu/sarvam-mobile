@@ -1,6 +1,6 @@
 /**
  * @sarvam/core
- * Official TypeScript Core SDK for Sarvam AI Indic language models and speech services.
+ * Unofficial TypeScript Core SDK for Sarvam AI Indic language models and speech services.
  * Pure TypeScript, zero Node.js built-ins.
  */
 

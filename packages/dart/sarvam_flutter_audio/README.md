@@ -11,7 +11,7 @@
 [![Rust Core Compatible](https://img.shields.io/badge/Rust%20Core-Hardware%20DSP-DEA584.svg?logo=rust)](../../rust-core)
 [![Platforms: Flutter](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web-blue)](https://flutter.dev)
 
-The official Flutter and Dart companion audio package for [Sarvam AI](https://sarvam.ai).
+The unofficial Flutter and Dart companion audio package for [Sarvam AI](https://sarvam.ai).
 
 Building real-time conversational voice assistants on mobile requires low-latency audio capture, strict audio format compliance, and instantaneous interruption (barge-in). `sarvam_flutter_audio` provides a production-grade audio pipeline engineered specifically for Sarvam's speech services:
 
