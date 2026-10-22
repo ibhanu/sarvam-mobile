@@ -3,6 +3,10 @@ name: Release & Publish Packages
 on:
   push:
     branches: [main]
+    tags:
+      - 'v*'
+      - '*-v*'
+      - 'packages/**'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -36,6 +40,7 @@ concurrency:
 jobs:
   release-please:
     name: Release Please (Automated Versioning & Changelogs)
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
@@ -105,11 +110,20 @@ jobs:
       contents: read
       id-token: write
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm')) ||
-      needs.release-please.outputs.ts_core_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/ts-core') ||
-      needs.release-please.outputs.react_native_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/react-native')
+      !failure() && !cancelled() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'npm')) ||
+        (startsWith(github.ref, 'refs/tags/') && (
+          startsWith(github.ref, 'refs/tags/v') ||
+          startsWith(github.ref, 'refs/tags/npm-') ||
+          startsWith(github.ref, 'refs/tags/ts-') ||
+          contains(github.ref, 'react-native') ||
+          contains(github.ref, 'ts-core')
+        )) ||
+        needs.release-please.outputs.ts_core_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/ts-core') ||
+        needs.release-please.outputs.react_native_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/react-native')
+      )
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -150,8 +164,16 @@ jobs:
           if [ -n "$NODE_AUTH_TOKEN" ]; then
             echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
           fi
+          TAG_VER=""
+          if [[ "${{ github.ref }}" =~ refs/tags/.*-v([0-9]+\.[0-9]+\.[0-9]+.*) ]] || [[ "${{ github.ref }}" =~ refs/tags/v([0-9]+\.[0-9]+\.[0-9]+.*) ]]; then
+            TAG_VER="${BASH_REMATCH[1]}"
+          fi
+
           echo "Publishing @sarvam-mobile/core..."
           cd packages/ts-core
+          if [ -n "$TAG_VER" ] && [[ "${{ github.ref }}" =~ (ts|npm|v[0-9]|packages/ts-core) ]]; then
+            npm version "$TAG_VER" --no-git-tag-version --allow-same-version || true
+          fi
           CORE_VER=$(node -p "require('./package.json').version")
           if npm view "@sarvam-mobile/core@$CORE_VER" version >/dev/null 2>&1; then
             echo "@sarvam-mobile/core@$CORE_VER already exists on npm. Skipping."
@@ -161,6 +183,9 @@ jobs:
 
           echo "Publishing @sarvam-mobile/react-native..."
           cd ../react-native
+          if [ -n "$TAG_VER" ] && [[ "${{ github.ref }}" =~ (react-native|npm|v[0-9]|packages/react-native) ]]; then
+            npm version "$TAG_VER" --no-git-tag-version --allow-same-version || true
+          fi
           RN_VER=$(node -p "require('./package.json').version")
           if npm view "@sarvam-mobile/react-native@$RN_VER" version >/dev/null 2>&1; then
             echo "@sarvam-mobile/react-native@$RN_VER already exists on npm. Skipping."
@@ -176,11 +201,18 @@ jobs:
       actions: write
       contents: read
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart')) ||
-      needs.release-please.outputs.dart_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam') ||
-      needs.release-please.outputs.dart_audio_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam_flutter_audio')
+      !failure() && !cancelled() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'dart')) ||
+        (startsWith(github.ref, 'refs/tags/') && (
+          startsWith(github.ref, 'refs/tags/v') ||
+          startsWith(github.ref, 'refs/tags/dart-') ||
+          contains(github.ref, 'packages/dart')
+        )) ||
+        needs.release-please.outputs.dart_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam') ||
+        needs.release-please.outputs.dart_audio_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/dart/sarvam_flutter_audio')
+      )
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -239,9 +271,17 @@ jobs:
     needs: release-please
     timeout-minutes: 15
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven')) ||
-      needs.release-please.outputs.kotlin_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/kotlin')
+      !failure() && !cancelled() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'maven')) ||
+        (startsWith(github.ref, 'refs/tags/') && (
+          startsWith(github.ref, 'refs/tags/v') ||
+          startsWith(github.ref, 'refs/tags/kotlin-') ||
+          startsWith(github.ref, 'refs/tags/android-') ||
+          contains(github.ref, 'packages/kotlin')
+        )) ||
+        needs.release-please.outputs.kotlin_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/kotlin')
+      )
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
@@ -262,7 +302,12 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           cd packages/kotlin
-          ./gradlew publishToMavenLocal publishAllPublicationsToStagingRepository --stacktrace
+          GRADLE_ARGS=""
+          if [[ "${{ github.ref }}" =~ refs/tags/.*-v([0-9]+\.[0-9]+\.[0-9]+.*) ]] || [[ "${{ github.ref }}" =~ refs/tags/v([0-9]+\.[0-9]+\.[0-9]+.*) ]]; then
+            TAG_VER="${BASH_REMATCH[1]}"
+            GRADLE_ARGS="-PVERSION_NAME=$TAG_VER"
+          fi
+          ./gradlew $GRADLE_ARGS publishToMavenLocal publishAllPublicationsToStagingRepository --stacktrace
 
       - name: Upload Maven Staging Artifacts Bundle
         uses: actions/upload-artifact@v4
@@ -311,9 +356,16 @@ jobs:
     needs: release-please
     timeout-minutes: 10
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift')) ||
-      needs.release-please.outputs.swift_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/swift')
+      !failure() && !cancelled() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'swift')) ||
+        (startsWith(github.ref, 'refs/tags/') && (
+          startsWith(github.ref, 'refs/tags/v') ||
+          startsWith(github.ref, 'refs/tags/swift-') ||
+          contains(github.ref, 'packages/swift')
+        )) ||
+        needs.release-please.outputs.swift_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/swift')
+      )
     runs-on: macos-14
     steps:
       - name: Checkout Repository
@@ -352,9 +404,16 @@ jobs:
     needs: release-please
     timeout-minutes: 10
     if: |
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'rust')) ||
-      needs.release-please.outputs.rust_core_created == 'true' ||
-      contains(needs.release-please.outputs.paths_released, 'packages/rust-core')
+      !failure() && !cancelled() && (
+        (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'rust')) ||
+        (startsWith(github.ref, 'refs/tags/') && (
+          startsWith(github.ref, 'refs/tags/v') ||
+          startsWith(github.ref, 'refs/tags/rust-') ||
+          contains(github.ref, 'packages/rust-core')
+        )) ||
+        needs.release-please.outputs.rust_core_created == 'true' ||
+        contains(needs.release-please.outputs.paths_released, 'packages/rust-core')
+      )
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repository
