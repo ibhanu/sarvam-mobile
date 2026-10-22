@@ -302,6 +302,26 @@ npm --prefix conformance/mock-server start
 
 ---
 
+## 🚀 Releasing Packages
+
+Releases can be triggered on-demand by pushing standard git tags without requiring conventional commit formatting:
+
+```bash
+# Release all packages simultaneously
+git tag v0.5.0
+git push origin v0.5.0
+
+# Release a specific platform SDK
+git tag kotlin-v0.2.2       # Publishes to Maven Central
+git tag npm-v0.4.1          # Publishes @sarvam-mobile/core & react-native to npm
+git tag dart-v0.4.2         # Publishes sarvam to pub.dev
+git tag swift-v0.3.2        # Validates and indexes in Swift Package Index
+git tag rust-v0.3.1         # Packages sarvam-rust-core crate
+git push origin <tag-name>
+```
+
+---
+
 ## 📄 License
 
 This monorepo is licensed under the [MIT License](LICENSE).
