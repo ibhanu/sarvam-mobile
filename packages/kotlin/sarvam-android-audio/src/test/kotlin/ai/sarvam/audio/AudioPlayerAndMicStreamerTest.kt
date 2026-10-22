@@ -77,8 +77,13 @@ class AudioPlayerAndMicStreamerTest {
         assertEquals(3200, firstChunk.size)
         assertTrue(levelEmitted.get())
 
-        // Yield for streamingJob to deliver the second chunk
-        kotlinx.coroutines.delay(50)
+        // Await streamingJob delivering the audio frame to the STT session using wall-clock dispatcher
+        withContext(Dispatchers.Default) {
+            val deadline = System.currentTimeMillis() + 3000
+            while (wsSession.sentMessages.none { it.contains("\"event\":\"audio_input\"") } && System.currentTimeMillis() < deadline) {
+                kotlinx.coroutines.delay(20)
+            }
+        }
 
         // Check STT session received audio frame
         assertTrue(wsSession.sentMessages.any { it.contains("\"event\":\"audio_input\"") })
