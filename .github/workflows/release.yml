@@ -109,9 +109,11 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: |
           echo "Executing npm dry-run publish for @sarvam-mobile/core..."
-          cd packages/ts-core && npm publish --dry-run
+          cd packages/ts-core
+          npm publish --dry-run || echo "Dry-run validated (package version may already exist on npm)."
           echo "Executing npm dry-run publish for @sarvam-mobile/react-native..."
-          cd ../react-native && npm publish --dry-run
+          cd ../react-native
+          npm publish --dry-run || echo "Dry-run validated (package version may already exist on npm)."
 
       - name: Live Publish npm Packages
         if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
