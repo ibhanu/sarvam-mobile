@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1](https://github.com/ibhanu/sarvam-mobile/compare/kotlin-v0.2.0...kotlin-v0.2.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* **kotlin:** eliminate virtual-time race in mic streamer stt forwarding test ([ef218a8](https://github.com/ibhanu/sarvam-mobile/commit/ef218a812439d8cd1b39a257e66fd6abdd8ccea8))
+
 ## [0.2.0](https://github.com/ibhanu/sarvam-mobile/compare/kotlin-v0.1.0...kotlin-v0.2.0) (2026-10-18)
 
 
