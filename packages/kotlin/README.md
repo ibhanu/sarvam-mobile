@@ -25,14 +25,14 @@ Add the core client and optional audio hardware companion to your `build.gradle.
 ```kotlin
 dependencies {
     // Core API client (pure Kotlin JVM, coroutines, OkHttp, kotlinx.serialization)
-    implementation("io.github.ibhanu:sarvam-core:0.2.0")
+    implementation("io.github.ibhanu:sarvam-core:0.2.1")
 
     // Android hardware audio companion (AudioRecord, AudioTrack, 16kHz resampler, Barge-in)
-    implementation("io.github.ibhanu:sarvam-android-audio:0.2.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.2.1")
 }
 ```
 
-*(Using Groovy `build.gradle`? Use `implementation 'io.github.ibhanu:sarvam-core:0.2.0'` and `implementation 'io.github.ibhanu:sarvam-android-audio:0.2.0'`)*
+*(Using Groovy `build.gradle`? Use `implementation 'io.github.ibhanu:sarvam-core:0.2.1'` and `implementation 'io.github.ibhanu:sarvam-android-audio:0.2.1'`)*
 
 ### 2. Make Your First Call
 
