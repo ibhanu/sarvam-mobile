@@ -17,7 +17,7 @@
 [![pub.dev sarvam](https://img.shields.io/pub/v/sarvam.svg?label=pub.dev%20sarvam)](https://pub.dev/packages/sarvam)
 [![pub.dev sarvam_flutter_audio](https://img.shields.io/pub/v/sarvam_flutter_audio.svg?label=pub.dev%20sarvam_flutter_audio)](https://pub.dev/packages/sarvam_flutter_audio)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg?label=maven%20io.github.ibhanu%3Asarvam-core)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core)
-[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-0.3.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile)
 
 ## 📌 About
 
@@ -115,8 +115,8 @@ flowchart TD
 | **Flutter / Dart** | `sarvam_flutter_audio` | [![pub package](https://img.shields.io/pub/v/sarvam_flutter_audio.svg)](https://pub.dev/packages/sarvam_flutter_audio) | [`packages/dart/sarvam_flutter_audio`](packages/dart/sarvam_flutter_audio) | Flutter audio capture and audio player companion |
 | **TypeScript / Web** | `@sarvam-mobile/core` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/core.svg)](https://www.npmjs.com/package/@sarvam-mobile/core) | [`packages/ts-core`](packages/ts-core) | Isomorphic zero-dependency TypeScript SDK with Wasm core bridge |
 | **React Native** | `@sarvam-mobile/react-native` | [![npm version](https://img.shields.io/npm/v/@sarvam-mobile/react-native.svg)](https://www.npmjs.com/package/@sarvam-mobile/react-native) | [`packages/react-native`](packages/react-native) | React Native bindings with native WebSocket optimization & Wasm bridge |
-| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package with C-FFI Rust core bridge |
-| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.0-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
+| **iOS / Swift** | `Sarvam` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/Sarvam`](packages/swift/Sources/Sarvam) | Core Swift Package with C-FFI Rust core bridge |
+| **iOS / Swift** | `SarvamAudio` | [![SwiftPM](https://img.shields.io/badge/SwiftPM-0.3.1-orange.svg)](https://github.com/ibhanu/sarvam-mobile) | [`packages/swift/Sources/SarvamAudio`](packages/swift/Sources/SarvamAudio) | AVAudioEngine streaming capture, 16 kHz resampling, playback |
 | **Android / Kotlin** | `io.github.ibhanu:sarvam-core` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-core.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-core) | [`packages/kotlin/sarvam-core`](packages/kotlin/sarvam-core) | Core Android/JVM client with JNI Rust core bridge |
 | **Android / Kotlin** | `io.github.ibhanu:sarvam-android-audio` | [![Maven Central](https://img.shields.io/maven-central/v/io.github.ibhanu/sarvam-android-audio.svg)](https://central.sonatype.com/artifact/io.github.ibhanu/sarvam-android-audio) | [`packages/kotlin/sarvam-android-audio`](packages/kotlin/sarvam-android-audio) | Microphone capture, 16 kHz PCM resampling, audio player |
 
@@ -177,8 +177,8 @@ Both `Sarvam` and `SarvamAudio` include bundled Apple Privacy Manifests (`Privac
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("io.github.ibhanu:sarvam-core:0.1.0")
-    implementation("io.github.ibhanu:sarvam-android-audio:0.1.0") // Optional
+    implementation("io.github.ibhanu:sarvam-core:0.2.0")
+    implementation("io.github.ibhanu:sarvam-android-audio:0.2.0") // Optional
 }
 
 // Instantiate client with TokenAuth
@@ -203,7 +203,7 @@ println(translation.translatedText)
 ```swift
 // Package.swift
 dependencies: [
-    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.3.0")
+    .package(url: "https://github.com/ibhanu/sarvam-mobile.git", from: "0.3.1")
 ]
 
 import Sarvam
@@ -250,7 +250,7 @@ console.log(response.translatedText);
 ```yaml
 # pubspec.yaml
 dependencies:
-  sarvam: ^0.4.0
+  sarvam: ^0.4.1
   sarvam_flutter_audio: ^0.3.0 # Optional
 ```
 ```dart
